@@ -1,9 +1,106 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Studio Infinity IA</title><meta name="description" content="Ensaios fotográficos personalizados com IA"><link rel="stylesheet" href="style.css"></head><body>
-<nav><img src="logo.jpeg"><b>STUDIO INFINITY IA</b><div><a href="#temas">Temas</a><a href="#como">Como funciona</a><a data-instagram target="_blank">Instagram</a><a class="mini" data-whatsapp target="_blank">WhatsApp</a></div></nav>
-<main><section class="hero"><div class="orb"></div><div class="eyebrow">SEU ENSAIO • SEM SAIR DE CASA</div><h1>Suas fotos transformadas em <span>momentos inesquecíveis.</span></h1><p>Escolha um tema, envie sua foto e veja uma prévia. Você conhece o valor antes de gerar e só compra se gostar.</p><div class="actions"><a class="cta" href="#temas">VER TEMAS E MODELOS</a><a class="ghost" data-instagram target="_blank">Ver nosso Instagram</a></div><div class="trust"><b>✓ Prévia antes da compra</b><b>✓ Pagamento seguro</b><b>✓ Sua própria foto como base</b></div></section>
-<section class="proof"><div><strong>Resultados reais</strong><span>Antes e depois em todos os temas</span></div><div><strong>Atendimento humano</strong><span>Se precisar, fale direto conosco</span></div><div><strong>Você decide</strong><span>Gostou da prévia? Só então compre</span></div></section>
-<section id="temas" class="section"><div class="eyebrow">ESCOLHA SEU ENSAIO</div><h2>Um tema para cada momento.</h2><p class="sub">Cada coleção pode exibir fotos originais e resultados reais do Studio Infinity IA.</p><div id="themes" class="grid"></div></section>
-<section class="before"><div class="eyebrow">ANTES → DEPOIS</div><h2>Veja a transformação antes de escolher.</h2><div class="compare"><div><div class="placeholder">FOTO ORIGINAL<br><small>seus exemplos reais entrarão aqui</small></div><label>ANTES</label></div><div><div class="placeholder result">RESULTADO<br>STUDIO INFINITY IA</div><label>DEPOIS</label></div></div></section>
-<section id="como" class="section"><div class="eyebrow">SIMPLES E TRANSPARENTE</div><h2>Veja o preço antes de gerar.</h2><div id="prices" class="prices"></div><p class="note">Para 3 ou mais pessoas e pedidos personalizados, fale conosco no WhatsApp.</p><div class="generator"><div><div class="eyebrow">SUA PRÉVIA</div><h2 id="chosenTheme">Mesversário</h2><p>Envie uma foto nítida. A prévia será gerada em alta qualidade e protegida por marca-d’água. Após o pagamento, a mesma imagem original poderá ser liberada.</p><input id="photo" type="file" accept="image/*"><button id="generate" class="cta wide">GERAR MINHA PRÉVIA</button><small id="priceConfirm"></small></div><div id="preview" class="preview"><div class="previewempty">Sua prévia aparecerá aqui<br><small>com proteção visual até o pagamento</small></div></div></div></section>
-<section class="testimonials"><div class="eyebrow">QUEM JÁ FEZ, RECOMENDA</div><h2>Confiança construída com clientes reais.</h2><div class="quotes"><blockquote>“Adicione aqui um depoimento real de cliente.”<small>Cliente Studio Infinity IA</small></blockquote><blockquote>“Seus prints e elogios reais entram nesta área.”<small>Cliente Studio Infinity IA</small></blockquote><blockquote>“Também podemos transformar prints em cards elegantes.”<small>Cliente Studio Infinity IA</small></blockquote></div><a class="ghost" data-instagram target="_blank">VER MAIS NO INSTAGRAM</a></section></main>
-<footer><img src="logo.jpeg"><div><b>Studio Infinity IA</b><p>Fotografia, memória e tecnologia em uma experiência simples.</p></div><div><a data-instagram target="_blank">Instagram</a><a data-whatsapp target="_blank">WhatsApp</a></div></footer><script src="config.js"></script><script src="script.js"></script></body></html>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#050817">
+  <title>Studio Infinity IA</title>
+  <meta name="description" content="Crie seu ensaio com IA, veja a prévia e pague somente se gostar.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#inicio"><img src="logo.jpeg" alt="Studio Infinity IA"><span>STUDIO INFINITY IA</span></a>
+    <div class="top-actions"><a data-instagram target="_blank" rel="noopener">Instagram</a><a class="wa" data-whatsapp target="_blank" rel="noopener">Falar conosco</a></div>
+  </header>
+
+  <main id="inicio" class="app-shell">
+    <section class="hero compact">
+      <div class="pill">SEU ENSAIO • SEM SAIR DE CASA</div>
+      <h1>Você envia a foto.<br><span>A gente transforma.</span></h1>
+      <p>Escolha seu pacote, encontre o tema perfeito e gere uma prévia. <b>Pague somente se gostar.</b></p>
+      <a class="primary" href="#depoimentos">VER COMO FICA</a>
+    </section>
+
+    <section id="depoimentos" class="flow-section social-proof">
+      <div class="section-head"><span>CLIENTES REAIS</span><h2>Quem faz, recomenda.</h2><p>Seus elogios passam automaticamente aqui.</p></div>
+      <div class="marquee" aria-label="Depoimentos de clientes">
+        <div class="proof-marquee" aria-label="Avaliações reais de clientes">
+          <div class="proof-track" id="testimonialTrack"><figure class="proof-slide"><img src="IMG_2958.jpeg" alt="Avaliação real de cliente do Studio Infinity IA" loading="eager" draggable="false"></figure><figure class="proof-slide"><img src="IMG_2957.jpeg" alt="Avaliação real de cliente do Studio Infinity IA" loading="eager" draggable="false"></figure><figure class="proof-slide"><img src="IMG_2956.jpeg" alt="Avaliação real de cliente do Studio Infinity IA" loading="eager" draggable="false"></figure><figure class="proof-slide"><img src="IMG_2954.jpeg" alt="Avaliação real de cliente do Studio Infinity IA" loading="eager" draggable="false"></figure><figure class="proof-slide"><img src="IMG_2953.jpeg" alt="Avaliação real de cliente do Studio Infinity IA" loading="eager" draggable="false"></figure><figure class="proof-slide"><img src="IMG_2955.jpeg" alt="Avaliação real de cliente do Studio Infinity IA" loading="eager" draggable="false"></figure><figure class="proof-slide"><img src="IMG_2950.jpeg" alt="Avaliação real de cliente do Studio Infinity IA" loading="eager" draggable="false"></figure><figure class="proof-slide"><img src="IMG_2952.jpeg" alt="Avaliação real de cliente do Studio Infinity IA" loading="eager" draggable="false"></figure><figure class="proof-slide"><img src="IMG_2951.jpeg" alt="Avaliação real de cliente do Studio Infinity IA" loading="eager" draggable="false"></figure><figure class="proof-slide"><img src="IMG_2948.jpeg" alt="Avaliação real de cliente do Studio Infinity IA" loading="eager" draggable="false"></figure><figure class="proof-slide"><img src="IMG_2958.jpeg" alt="Avaliação real de cliente do Studio Infinity IA" loading="eager" draggable="false"></figure><figure class="proof-slide"><img src="IMG_2957.jpeg" alt="Avaliação real de cliente do Studio Infinity IA" loading="eager" draggable="false"></figure><figure class="proof-slide"><img src="IMG_2956.jpeg" alt="Avaliação real de cliente do Studio Infinity IA" loading="eager" draggable="false"></figure><figure class="proof-slide"><img src="IMG_2954.jpeg" alt="Avaliação real de cliente do Studio Infinity IA" loading="eager" draggable="false"></figure><figure class="proof-slide"><img src="IMG_2953.jpeg" alt="Avaliação real de cliente do Studio Infinity IA" loading="eager" draggable="false"></figure><figure class="proof-slide"><img src="IMG_2955.jpeg" alt="Avaliação real de cliente do Studio Infinity IA" loading="eager" draggable="false"></figure><figure class="proof-slide"><img src="IMG_2950.jpeg" alt="Avaliação real de cliente do Studio Infinity IA" loading="eager" draggable="false"></figure><figure class="proof-slide"><img src="IMG_2952.jpeg" alt="Avaliação real de cliente do Studio Infinity IA" loading="eager" draggable="false"></figure><figure class="proof-slide"><img src="IMG_2951.jpeg" alt="Avaliação real de cliente do Studio Infinity IA" loading="eager" draggable="false"></figure><figure class="proof-slide"><img src="IMG_2948.jpeg" alt="Avaliação real de cliente do Studio Infinity IA" loading="eager" draggable="false"></figure></div>
+        </div>
+      </div>
+      <a class="inline-link" data-instagram target="_blank" rel="noopener">Ver mais resultados no Instagram →</a>
+    </section>
+
+    <section id="pedido" class="flow-section order-section">
+      <div class="step-title"><i>1</i><div><span>PERSONALIZE A EXPERIÊNCIA</span><h2>O ensaio é para menino ou menina?</h2></div></div>
+      <div class="gender-grid" id="genderGrid">
+        <button class="gender-option" data-gender="menino"><span>MENINO</span><b>Temas para menino</b></button>
+        <button class="gender-option" data-gender="menina"><span>MENINA</span><b>Temas para menina</b></button>
+      </div>
+      <p class="gender-note" id="genderNote">Escolha uma opção para ver temas e exemplos personalizados.</p>
+      <div class="price-step locked" id="priceStep">
+      <div class="substep"><span>SEU PACOTE</span><h2>Quantas fotos você quer?</h2></div>
+      <div class="package-grid" id="packageGrid">
+        <button class="package selected" data-package="1" data-price="20"><small>PARA EXPERIMENTAR</small><strong>1 foto</strong><em>R$ 20</em></button>
+        <button class="package featured" data-package="2" data-price="25"><small>MELHOR CUSTO-BENEFÍCIO</small><strong>2 fotos</strong><em>R$ 25</em></button>
+      </div>
+
+      <div class="addons">
+        <h3>Personalize seu ensaio</h3>
+        <label class="addon"><span><b>Bolo temático com nome do bebê</b><small>Adiciona um bolo personalizado ao cenário</small></span><span class="addon-price">+ R$ 5</span><input id="cake" type="checkbox"><i></i></label>
+        <div class="people-addon"><div><b>Pessoas adicionais</b><small>Além da pessoa principal • até 3 adicionais</small></div><div class="counter"><button id="minusPerson" type="button">−</button><strong id="extraPeople">0</strong><button id="plusPerson" type="button">+</button></div><span>+ R$ 5 cada</span></div>
+      </div>
+
+      <div class="sticky-summary" id="summary"><div><small>SEU PEDIDO</small><b id="summaryText">1 foto</b></div><strong id="totalPrice">R$ 20</strong><button id="toThemes">ESCOLHER TEMA ↓</button></div>
+      </div>
+    </section>
+
+    <section id="temas" class="flow-section themes-section">
+      <div class="step-title"><i>2</i><div><span>ESCOLHA O ESTILO</span><h2>Qual momento vamos criar?</h2></div></div>
+      <div class="theme-grid" id="themeGrid"></div>
+    </section>
+
+    <section id="themeDetail" class="theme-detail hidden">
+      <button class="close-detail" id="closeTheme" aria-label="Fechar">×</button>
+      <div class="detail-copy"><span id="themeBadge">TEMA</span><h2 id="themeName">Mesversário</h2><p id="themeDescription"></p></div>
+      <div class="before-after" id="beforeAfter"></div>
+      <button class="primary full" id="chooseTheme">ESCOLHER ESTE TEMA</button>
+    </section>
+
+    <section id="gerar" class="flow-section generator-section">
+      <div class="step-title"><i>3</i><div><span>SUA PRÉVIA</span><h2>Agora envie sua foto.</h2></div></div>
+      <div class="chosen-order" id="chosenOrder"><span>Tema: <b id="chosenThemeLabel">Escolha um tema acima</b></span><span>Total se gostar: <b id="chosenTotal">R$ 20</b></span></div>
+      <label class="upload-box" for="photo"><input id="photo" type="file" accept="image/jpeg,image/png,image/webp"><span class="upload-icon">＋</span><b>Selecionar minha foto</b><small>Use uma foto nítida, de preferência de frente</small><em id="fileName"></em></label>
+      <button class="primary full" id="generate" disabled>GERAR PRÉVIA • PAGUE SÓ SE GOSTAR</button>
+      <p class="micro">Ao gerar, você já sabe o valor. Se não gostar do resultado, você não precisa comprar.</p>
+
+      <div id="previewArea" class="preview-area hidden">
+        <div class="preview-card" id="previewCard"><img id="previewImage" alt="Prévia do ensaio"></div>
+        <div class="preview-actions">
+          <h3>Gostou do resultado?</h3>
+          <p>Esta é a sua foto. Após o pagamento, liberamos <b>esta mesma imagem</b> em alta qualidade e sem marca-d'água.</p>
+          <button class="primary full" id="buyButton">AMEI! DESBLOQUEAR POR <span id="buyPrice">R$ 20</span></button>
+          <a class="secondary full" id="dislikeButton" data-whatsapp target="_blank" rel="noopener">Não ficou como imaginei • falar no WhatsApp</a>
+        </div>
+      </div>
+
+      <div id="paidArea" class="paid-area hidden">
+        <div class="success-icon">✓</div><h2>Pagamento confirmado!</h2><p>Sua foto está liberada em alta qualidade e sem marca-d'água.</p>
+        <a class="primary full" id="downloadButton" download>BAIXAR MINHA FOTO</a>
+      </div>
+
+      <div id="thanksArea" class="thanks-area hidden">
+        <div class="success-icon">∞</div><h2>Obrigado por escolher o Studio Infinity IA.</h2><p>Quer acompanhar novos temas e ideias para o próximo ensaio?</p><a class="primary full" data-instagram target="_blank" rel="noopener">SEGUIR @STUDIOINFINITYIA</a>
+      </div>
+    </section>
+
+    <section class="confidence">
+      <div><b>Prévia antes da compra</b><small>Você decide depois de ver.</small></div><div><b>Pagamento seguro</b><small>Checkout pela Kiwify.</small></div><div><b>Atendimento humano</b><small>Precisou? Estamos no WhatsApp.</small></div>
+    </section>
+  </main>
+
+  <a class="floating-wa" data-whatsapp target="_blank" rel="noopener" aria-label="WhatsApp">WhatsApp</a>
+  <footer><img src="logo.jpeg" alt=""><div><b>Studio Infinity IA</b><small>Ensaios personalizados com inteligência artificial.</small></div><a data-instagram target="_blank" rel="noopener">@studioinfinityia</a></footer>
+  <script src="config.js"></script><script src="script.js"></script>
+</body></html>

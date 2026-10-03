@@ -1,15 +1,28 @@
-# Studio Infinity IA — pasta única
-Todos os arquivos do projeto ficam neste mesmo nível, sem subpastas.
+# Studio Infinity IA — experiência de compra em uma página
 
-## Antes de publicar para clientes
-Este é o MVP visual e estrutural. A interface está pronta, mas a geração real por GPT Images, armazenamento privado, marca-d'água definitiva e confirmação automática da Kiwify ainda precisam ser conectados/testados antes de tráfego pago.
+Projeto em pasta única, sem subpastas.
 
-## Arquivos
-- index.html — site
-- style.css — identidade visual
-- script.js — interações
-- config.js — Instagram, WhatsApp e checkout
-- server.js — backend seguro
-- logo.jpeg — logo
-- package.json / vercel.json — publicação
-- .env.example — exemplo da chave da OpenAI
+## Fluxo implementado na interface
+1. Provas sociais / Instagram.
+2. Escolha 1 foto (R$20) ou 2 fotos (R$25).
+3. Opcionais: bolo temático +R$5; até 3 pessoas adicionais +R$5 cada.
+4. Escolha de tema e galeria antes/depois.
+5. Upload e geração da prévia.
+6. Se gostar: checkout Kiwify. Se não: WhatsApp.
+7. Após webhook de pagamento: liberação da mesma imagem original em alta qualidade.
+8. Após download: agradecimento + CTA para Instagram.
+
+## Segurança da prévia
+Não é seguro carregar o original no navegador e apenas colocar uma imagem por cima com CSS: o original poderia ser extraído. O correto — e sem gastar tokens extras — é gerar UMA imagem com GPT Images, guardar o original de forma privada e criar no servidor uma cópia com a mesma marca-d'água para todas as prévias. A marca-d'água não usa GPT e não exige nova geração.
+
+## Links já configurados
+Instagram: https://www.instagram.com/studioinfinityia/
+WhatsApp: https://wa.me/message/RERL7TJ3SJRBD1
+
+## Próximas conexões
+- Supabase: pedidos + storage privado.
+- OpenAI GPT Images: geração única da imagem.
+- Watermark no servidor.
+- Kiwify: links de checkout + webhook.
+- Prints/vídeo reais de depoimentos.
+- Fotos reais de antes/depois por tema.
