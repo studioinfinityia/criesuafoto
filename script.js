@@ -61,10 +61,10 @@ document.querySelector('#generate').onclick=async()=>{if(!state.theme||!photo.fi
 document.querySelector('#buyButton').onclick=()=>{if(!state.orderId)return alert('Gere sua prévia primeiro.');const finalTotal=total();const checkout=cfg.kiwify?.byTotal?.[finalTotal];if(!checkout)return alert(`Ainda não há checkout configurado para ${money(finalTotal)}. Fale conosco no WhatsApp para concluir seu pedido.`);metaTrack('InitiateCheckout',trackingContext(),true);metaTrack('KiwifyRedirect',trackingContext());localStorage.setItem('studio_waiting_payment','1');window.location.href=checkout;};
 async function checkPayment(){if(!state.orderId)return;try{const r=await fetch(`${cfg.orderStatusEndpoint}?orderId=${encodeURIComponent(state.orderId)}`);if(!r.ok)return;const j=await r.json();if(j.paid&&j.downloadUrl){document.querySelector('#previewArea').classList.add('hidden');document.querySelector('#paidArea').classList.remove('hidden');const a=document.querySelector('#downloadButton');a.href=j.downloadUrl;a.onclick=()=>setTimeout(()=>{document.querySelector('#paidArea').classList.add('hidden');document.querySelector('#thanksArea').classList.remove('hidden');},500);}}catch{}}
 function setGuide(step){
-  document.querySelectorAll('.funnel-glow').forEach(el=>el.classList.remove('funnel-glow'));
+  document.querySelectorAll('.funnel-glow').forEach(el=>el.classList.remove('funnel-glow')); document.querySelectorAll('.funnel-stage').forEach(el=>el.classList.remove('funnel-stage'));
   let el=null;
-  if(step==='gender') el=document.querySelector('#genderGrid');
-  if(step==='theme') el=document.querySelector('#themeGrid');
+  if(step==='gender'){ const g=document.querySelector('#genderGrid'); if(g) g.classList.add('funnel-stage'); return; }
+  if(step==='theme'){ const g=document.querySelector('#themeGrid'); if(g) g.classList.add('funnel-stage'); return; }
   if(step==='choose-theme') el=document.querySelector('#chooseTheme');
   if(step==='package') el=document.querySelector('.package.featured');
   if(step==='to-preview') el=document.querySelector('#toThemes');

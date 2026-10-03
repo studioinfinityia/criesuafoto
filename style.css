@@ -20,9 +20,19 @@
 .locked-section{opacity:.46;pointer-events:none;filter:saturate(.55)}
 .preview-rule{margin:18px 0;padding:18px;border:1px solid rgba(77,210,255,.28);border-radius:18px;background:linear-gradient(135deg,rgba(43,88,255,.10),rgba(232,44,255,.08));text-align:left}
 .preview-rule b{display:block;color:#77e9ff;font-size:.82rem;letter-spacing:.08em;margin-bottom:7px}.preview-rule p{margin:0;color:#dce5ff;line-height:1.55}.preview-rule strong{color:#fff}
-\n/* Funil guiado: somente a próxima ação pulsa */
+/* Funil guiado: somente a próxima ação pulsa */
 @keyframes funnelPulse{0%,100%{box-shadow:0 0 0 1px rgba(24,217,255,.42),0 0 16px rgba(24,217,255,.18),0 0 28px rgba(255,39,215,.08);transform:translateY(0)}50%{box-shadow:0 0 0 2px rgba(24,217,255,.95),0 0 24px rgba(24,217,255,.48),0 0 44px rgba(255,39,215,.24);transform:translateY(-1px)}}
 .funnel-glow{position:relative;z-index:3;animation:funnelPulse 1.45s ease-in-out infinite!important;border-color:rgba(24,217,255,.85)!important}
 #genderGrid.funnel-glow,#themeGrid.funnel-glow{padding:9px;border-radius:24px;background:linear-gradient(135deg,rgba(24,217,255,.045),rgba(255,39,215,.04))}
 .package.funnel-glow,.primary.funnel-glow,.upload-box.funnel-glow{animation:funnelPulse 1.25s ease-in-out infinite!important}
 @media(prefers-reduced-motion:reduce){.funnel-glow{animation:none!important;box-shadow:0 0 0 2px rgba(24,217,255,.8),0 0 24px rgba(24,217,255,.25)!important}}
+
+/* v5 - brilho forte e visível da próxima ação */
+@keyframes neonNext{
+  0%,100%{box-shadow:0 0 0 2px rgba(24,217,255,.95),0 0 14px rgba(24,217,255,.75),0 0 32px rgba(122,53,255,.55),0 0 52px rgba(255,39,215,.25);filter:brightness(1.05)}
+  50%{box-shadow:0 0 0 3px #18d9ff,0 0 24px rgba(24,217,255,1),0 0 48px rgba(122,53,255,.8),0 0 72px rgba(255,39,215,.45);filter:brightness(1.28)}
+}
+.funnel-glow{animation:neonNext 1.05s ease-in-out infinite!important;border-color:#18d9ff!important;position:relative!important;z-index:8!important}
+.gender-option.funnel-glow,.theme-card.funnel-glow,.package.funnel-glow,.primary.funnel-glow,.upload-box.funnel-glow{animation:neonNext 1.05s ease-in-out infinite!important}
+.gender-grid.funnel-stage .gender-option,.theme-grid.funnel-stage .theme-card{animation:neonNext 1.05s ease-in-out infinite!important;border-color:#18d9ff!important}
+.gender-grid.funnel-stage,.theme-grid.funnel-stage{padding:10px;border-radius:24px;background:rgba(24,217,255,.035)}
