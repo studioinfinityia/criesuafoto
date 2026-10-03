@@ -1,0 +1,3 @@
+Versão completa atualizada: GitHub Pages conectado ao backend Vercel.
+Site público: https://studioinfinityia.github.io/criesuafoto/
+Backend: https://criesuafoto.vercel.app
