@@ -11,7 +11,8 @@ window.STUDIO_CONFIG = {
       25: 'https://pay.kiwify.com.br/CM2ORuA',
       30: 'https://pay.kiwify.com.br/ZLOABUE',
       35: 'https://pay.kiwify.com.br/GSu5M1H',
-      40: 'https://pay.kiwify.com.br/aG22Th0'
+      40: 'https://pay.kiwify.com.br/aG22Th0',
+      45: 'https://pay.kiwify.com.br/kpJPbIr'
     }
   }
 };
