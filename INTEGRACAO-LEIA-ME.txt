@@ -1,0 +1,28 @@
+STUDIO INFINITY IA — INTEGRAÇÃO REAL
+
+O que esta versão já faz:
+- /api/health confirma se OpenAI + Supabase estão disponíveis no servidor.
+- /api/generate recebe a foto, usa GPT-Image-2.5 Sunburst em quality=max, salva o original no bucket privado e devolve somente uma prévia com marca-d'água.
+- A prévia e o original são a MESMA geração; a marca-d'água é aplicada localmente pelo servidor.
+- O original nunca é enviado ao navegador antes de payment_status=paid.
+- Há uma trava server-side por dispositivo para a prévia gratuita.
+- Fotos grandes são reduzidas no navegador antes do upload para evitar o limite de requisição da Vercel.
+- /api/order-status já está preparado para liberar uma URL assinada do original quando o pedido estiver pago.
+
+IMPORTANTE:
+1. OPENAI_API_KEY, SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY devem existir na Vercel (já configuradas pelo proprietário).
+2. O bucket privado deve se chamar exatamente: studio-infinity-images
+3. A primeira geração REAL só funcionará quando a conta da API OpenAI tiver acesso/faturamento suficiente e, se exigido pela OpenAI, a organização estiver verificada.
+4. O webhook da Kiwify ainda NÃO marca automaticamente como pago. Antes disso, use o botão Test Webhook da Kiwify para capturarmos um payload real e mapearmos com segurança os campos da compra/oferta. Não é seguro adivinhar esse payload.
+5. Não coloque nenhuma chave secreta no GitHub.
+
+ARQUIVOS ALTERADOS NESTA VERSÃO:
+- server.js
+- script.js
+- package.json
+
+TESTE SEM GASTAR:
+Abra https://SEU-DOMINIO.vercel.app/api/health
+O esperado é algo como:
+{"server":true,"openaiKey":true,"supabase":true,"bucket":"studio-infinity-images"}
+Esse teste NÃO gera imagem e NÃO consome geração da OpenAI.
