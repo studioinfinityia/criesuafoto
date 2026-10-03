@@ -9,7 +9,7 @@ window.STUDIO_CONFIG = {
   // Enquanto estiver vazio, o site avisa sem perder a prévia.
   kiwify: {
     default: '',
-    package1: '',
-    package2: ''
+    package1: 'https://pay.kiwify.com.br/P6QagM2',
+    package2: 'https://pay.kiwify.com.br/CM2ORuA'
   }
 };

@@ -18,7 +18,7 @@
   fbq('track','PageView');
   </script>
   <!-- End Meta Pixel -->
-  <link rel="stylesheet" href="style.css?v=20261003-3">
+  <link rel="stylesheet" href="style.css?v=20261003-4">
   <style>html,body{width:100%;max-width:100%;overflow-x:hidden}.topbar .brand img{width:38px!important;height:38px!important;max-width:38px!important;object-fit:cover}.topbar{min-height:66px}.app-shell{display:block;width:min(100%,980px);margin:0 auto}.hero{display:block;text-align:center}.social-proof img{max-width:100%;height:auto}.proof-slide img{width:100%!important;aspect-ratio:706/1536;object-fit:cover}footer img{width:42px!important;height:42px!important;max-width:42px!important}</style>
 </head>
 <body>
@@ -51,26 +51,11 @@
         <button class="gender-option" data-gender="menino"><span>MENINO</span><b>Temas para menino</b></button>
         <button class="gender-option" data-gender="menina"><span>MENINA</span><b>Temas para menina</b></button>
       </div>
-      <p class="gender-note" id="genderNote">Escolha uma opção para ver temas e exemplos personalizados.</p>
-      <div class="price-step locked" id="priceStep">
-      <div class="substep"><span>SEU PACOTE</span><h2>Quantas fotos você quer?</h2></div>
-      <div class="package-grid" id="packageGrid">
-        <button class="package selected" data-package="1" data-price="20"><small>PARA EXPERIMENTAR</small><strong>1 foto</strong><em>R$ 20</em></button>
-        <button class="package featured" data-package="2" data-price="25"><small>MELHOR CUSTO-BENEFÍCIO</small><strong>2 fotos</strong><em>R$ 25</em></button>
-      </div>
-
-      <div class="addons">
-        <h3>Personalize seu ensaio</h3>
-        <label class="addon"><span><b>Bolo temático com nome do bebê</b><small>Adiciona um bolo personalizado ao cenário</small></span><span class="addon-price">+ R$ 5</span><input id="cake" type="checkbox"><i></i></label>
-        <div class="people-addon"><div><b>Pessoas adicionais</b><small>Além da pessoa principal • até 3 adicionais</small></div><div class="counter"><button id="minusPerson" type="button">−</button><strong id="extraPeople">0</strong><button id="plusPerson" type="button">+</button></div><span>+ R$ 5 cada</span></div>
-      </div>
-
-      <div class="sticky-summary" id="summary"><div><small>SEU PEDIDO</small><b id="summaryText">1 foto</b></div><strong id="totalPrice">R$ 20</strong><button id="toThemes">ESCOLHER TEMA ↓</button></div>
-      </div>
+      <p class="gender-note" id="genderNote">Escolha uma opção para liberar os temas e exemplos correspondentes.</p>
     </section>
 
-    <section id="temas" class="flow-section themes-section">
-      <div class="step-title"><i>2</i><div><span>ESCOLHA O ESTILO</span><h2>Qual momento vamos criar?</h2></div></div>
+    <section id="temas" class="flow-section themes-section locked-section">
+      <div class="step-title"><i>2</i><div><span>ESCOLHA O ESTILO</span><h2>Agora escolha o seu tema.</h2></div></div>
       <div class="theme-grid" id="themeGrid"></div>
       <div class="custom-theme-box">
         <span>TEMA PERSONALIZADO</span>
@@ -78,6 +63,23 @@
         <p>Nós fazemos <b>QUALQUER TEMA</b>. Conte sua ideia no WhatsApp e criamos algo personalizado para você.</p>
         <p class="bulk-note"><b>Quer uma quantidade maior de fotos?</b> Temos preços especiais para pedidos com mais fotos.</p>
         <a class="primary full" id="customThemeWhatsapp" data-whatsapp target="_blank" rel="noopener">QUERO MEU TEMA PERSONALIZADO NO WHATSAPP</a>
+      </div>
+    </section>
+
+    <section id="precos" class="flow-section order-section locked-section">
+      <div class="step-title"><i>3</i><div><span>ESCOLHA SEU PACOTE</span><h2>Quantas fotos você quer?</h2></div></div>
+      <div class="price-step" id="priceStep">
+        <div class="package-grid" id="packageGrid">
+          <button class="package selected" data-package="1" data-price="20"><small>PARA EXPERIMENTAR</small><strong>1 foto</strong><em>R$ 20</em></button>
+          <button class="package featured" data-package="2" data-price="25"><small>MELHOR CUSTO-BENEFÍCIO</small><strong>2 fotos</strong><em>R$ 25</em></button>
+        </div>
+        <div class="preview-rule"><b>1 PRÉVIA GRATUITA ANTES DO PAGAMENTO</b><p>Você pode gerar <strong>somente uma prévia</strong> para conhecer a qualidade do Studio Infinity IA. Assim, você vê o resultado primeiro e paga com certeza e confiança somente se gostar.</p></div>
+        <div class="addons">
+          <h3>Personalize seu ensaio</h3>
+          <label class="addon"><span><b>Bolo temático com nome do bebê</b><small>Adiciona um bolo personalizado ao cenário</small></span><span class="addon-price">+ R$ 5</span><input id="cake" type="checkbox"><i></i></label>
+          <div class="people-addon"><div><b>Pessoas adicionais</b><small>Além da pessoa principal • até 3 adicionais</small></div><div class="counter"><button id="minusPerson" type="button">−</button><strong id="extraPeople">0</strong><button id="plusPerson" type="button">+</button></div><span>+ R$ 5 cada</span></div>
+        </div>
+        <div class="sticky-summary" id="summary"><div><small>SEU PEDIDO</small><b id="summaryText">1 foto</b></div><strong id="totalPrice">R$ 20</strong><button id="toThemes">GERAR MINHA PRÉVIA ↓</button></div>
       </div>
     </section>
 
@@ -89,11 +91,11 @@
     </section>
 
     <section id="gerar" class="flow-section generator-section">
-      <div class="step-title"><i>3</i><div><span>SUA PRÉVIA</span><h2>Agora envie sua foto.</h2></div></div>
+      <div class="step-title"><i>4</i><div><span>SUA PRÉVIA</span><h2>Agora envie sua foto.</h2></div></div>
       <div class="chosen-order" id="chosenOrder"><span>Tema: <b id="chosenThemeLabel">Escolha um tema acima</b></span><span>Total se gostar: <b id="chosenTotal">R$ 20</b></span></div>
       <label class="upload-box" for="photo"><input id="photo" type="file" accept="image/jpeg,image/png,image/webp"><span class="upload-icon">＋</span><b>Selecionar minha foto</b><small>Use uma foto nítida, de preferência de frente</small><em id="fileName"></em></label>
       <button class="primary full" id="generate" disabled>GERAR PRÉVIA • PAGUE SÓ SE GOSTAR</button>
-      <p class="micro">Ao gerar, você já sabe o valor. Se não gostar do resultado, você não precisa comprar.</p>
+      <p class="micro"><b>Importante:</b> é permitida somente 1 prévia gratuita antes do pagamento. Ela existe para você conhecer nossa qualidade e comprar com segurança. Se gostar, esta mesma imagem será liberada sem marca-d'água após a confirmação do pagamento.</p>
 
       <div id="previewArea" class="preview-area hidden">
         <div class="preview-card" id="previewCard"><img id="previewImage" alt="Prévia do ensaio"></div>
@@ -122,5 +124,5 @@
 
   <a class="floating-wa" data-whatsapp target="_blank" rel="noopener" aria-label="WhatsApp">WhatsApp</a>
   <footer><img src="logo.jpeg" alt=""><div><b>Studio Infinity IA</b><small>Ensaios personalizados com inteligência artificial.</small></div><a data-instagram target="_blank" rel="noopener">@studioinfinityia</a></footer>
-  <script src="config.js?v=20261003-3"></script><script src="script.js?v=20261003-3"></script>
+  <script src="config.js?v=20261003-4"></script><script src="script.js?v=20261003-4"></script>
 </body></html>
