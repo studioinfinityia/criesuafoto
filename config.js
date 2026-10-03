@@ -1,8 +1,8 @@
 window.STUDIO_CONFIG = {
   instagram: 'https://www.instagram.com/studioinfinityia/',
   whatsapp: 'https://wa.me/message/RERL7TJ3SJRBD1',
-  apiEndpoint: '/api/generate',
-  orderStatusEndpoint: '/api/order-status',
+  apiEndpoint: 'https://criesuafoto.vercel.app/api/generate',
+  orderStatusEndpoint: 'https://criesuafoto.vercel.app/api/order-status',
   metaPixelId: '1077184481977337',
   // Checkout escolhido automaticamente pelo VALOR FINAL do pedido.
   kiwify: {
