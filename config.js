@@ -4,12 +4,14 @@ window.STUDIO_CONFIG = {
   apiEndpoint: '/api/generate',
   orderStatusEndpoint: '/api/order-status',
   metaPixelId: '1077184481977337',
-  // COLE AQUI os links de checkout da Kiwify.
-  // Se houver um checkout por pacote, preencha package1 e package2.
-  // Enquanto estiver vazio, o site avisa sem perder a prévia.
+  // Checkout escolhido automaticamente pelo VALOR FINAL do pedido.
   kiwify: {
-    default: '',
-    package1: 'https://pay.kiwify.com.br/P6QagM2',
-    package2: 'https://pay.kiwify.com.br/CM2ORuA'
+    byTotal: {
+      20: 'https://pay.kiwify.com.br/P6QagM2',
+      25: 'https://pay.kiwify.com.br/CM2ORuA',
+      30: 'https://pay.kiwify.com.br/ZLOABUE',
+      35: 'https://pay.kiwify.com.br/GSu5M1H',
+      40: 'https://pay.kiwify.com.br/aG22Th0'
+    }
   }
 };
