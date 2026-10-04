@@ -203,6 +203,25 @@ app.get('/api/health', async (_req, res) => {
   } catch { return res.status(503).json(result); }
 });
 
+
+function isAuthorizedTestDevice(req, deviceId) {
+  const configuredId = String(process.env.TEST_DEVICE_ID || '').trim();
+  const configuredSecret = String(process.env.TEST_DEVICE_SECRET || '').trim();
+  const suppliedSecret = String(req.body.testDeviceSecret || '').trim();
+
+  if (!configuredId || !configuredSecret || !deviceId || !suppliedSecret) return false;
+
+  const idOk = crypto.timingSafeEqual(
+    crypto.createHash('sha256').update(String(deviceId)).digest(),
+    crypto.createHash('sha256').update(configuredId).digest()
+  );
+  const secretOk = crypto.timingSafeEqual(
+    crypto.createHash('sha256').update(suppliedSecret).digest(),
+    crypto.createHash('sha256').update(configuredSecret).digest()
+  );
+  return idOk && secretOk;
+}
+
 app.post('/api/generate', upload.single('image'), async (req, res) => {
   let orderId = null;
   try {
@@ -217,6 +236,7 @@ app.post('/api/generate', upload.single('image'), async (req, res) => {
     if (deviceId.length < 12) return res.status(400).json({ error: 'Atualize a página e tente novamente.' });
     const fingerprint = clientFingerprint(req, deviceId);
     const markerPath = `preview-limits/${fingerprint}.json`;
+    const testDevice = isAuthorizedTestDevice(req, deviceId);
 
     // Compra de R$ 25+ libera a próxima geração incluída no pedido.
     // O direito é validado no servidor e não depende do navegador.
@@ -251,7 +271,7 @@ app.post('/api/generate', upload.single('image'), async (req, res) => {
       }
     }
 
-    const existing = await storageGet(markerPath);
+    const existing = testDevice ? null : await storageGet(markerPath);
     if (existing) return res.status(429).json({ error: 'A prévia gratuita deste dispositivo já foi utilizada. Após uma compra de R$ 25 ou mais, uma nova geração é liberada automaticamente.' });
 
     const requestedOrderId = String(req.body.orderId || '');
@@ -295,10 +315,12 @@ app.post('/api/generate', upload.single('image'), async (req, res) => {
     order.generated_at = new Date().toISOString();
     if (generated.usage) order.openai_usage = generated.usage;
     await saveOrder(order);
-    await storageUpload(markerPath, Buffer.from(JSON.stringify({ order_id: orderId, created_at: order.created_at })), 'application/json', true);
+    if (!testDevice) {
+      await storageUpload(markerPath, Buffer.from(JSON.stringify({ order_id: orderId, created_at: order.created_at })), 'application/json', true);
+    }
 
     const previewUrl = await signedUrl(previewPath, 60 * 60);
-    return res.json({ orderId, previewUrl });
+    return res.json({ orderId, previewUrl, testDevice });
   } catch (e) {
     console.error('generate error', e);
     let message = 'Não foi possível criar sua prévia agora. Tente novamente em alguns instantes.';

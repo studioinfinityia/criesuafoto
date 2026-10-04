@@ -7,6 +7,22 @@ const state = { gender:null, photos:1, basePrice:20, cake:false, extraPeople:0, 
 const deviceId = localStorage.getItem('studio_device_id') || (crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`);
 localStorage.setItem('studio_device_id', deviceId);
 
+// ---- Modo de teste privado ----
+// No iPhone, abra uma única vez: SEU_SITE/#studio-test=SEU_SEGREDO
+// O segredo fica salvo somente neste navegador. Depois, use o site normalmente.
+(function initPrivateTestMode(){
+  const prefix = '#studio-test=';
+  if (location.hash.startsWith(prefix)) {
+    const secret = decodeURIComponent(location.hash.slice(prefix.length)).trim();
+    if (secret) {
+      localStorage.setItem('studio_test_device_secret', secret);
+      history.replaceState(null, '', location.pathname + location.search);
+      alert('Modo de teste ativado neste dispositivo.');
+    }
+  }
+})();
+
+
 async function prepareUploadImage(file){
   // Mantém o upload abaixo do limite das funções serverless sem destruir a qualidade usada como referência.
   if(file.size <= 2.8*1024*1024 && file.type === 'image/jpeg') return file;
@@ -87,7 +103,7 @@ function finishProgress(){clearInterval(progressTimer);document.querySelector('#
 function stopProgress(){clearInterval(progressTimer);document.querySelector('#generationProgress').classList.add('hidden');}
 function showPreview(url){if(!url)return;const img=document.querySelector('#previewImage');img.src=url;img.oncontextmenu=e=>e.preventDefault();img.ondragstart=e=>e.preventDefault();document.querySelector('#previewArea').classList.remove('hidden');setGuide('checkout');document.querySelector('#previewArea').scrollIntoView({behavior:'smooth'});}
 document.querySelector('#previewCard').addEventListener('contextmenu',e=>e.preventDefault());
-document.querySelector('#generate').onclick=async()=>{validatePersonalization();if(!state.theme||!photo.files[0]||!state.babyName||!state.babyMonths)return alert('Preencha o nome e a idade do bebê e selecione a foto.');if(localStorage.getItem('studio_preview_used')==='1'&&!state.orderId){alert('A prévia gratuita deste dispositivo já foi utilizada. Para ajustes ou um novo tema, fale conosco no WhatsApp.');return;}metaTrack('PreviewStarted',trackingContext());const btn=document.querySelector('#generate');btn.disabled=true;btn.textContent='CRIANDO SUA PRÉVIA...';if(!state.orderId){state.orderId=crypto.randomUUID();sessionStorage.setItem('studio_order_id',state.orderId);}startProgress();try{const uploadImage=await prepareUploadImage(photo.files[0]);const fd=new FormData();fd.append('image',uploadImage);fd.append('orderId',state.orderId);fd.append('deviceId',deviceId);fd.append('gender',state.gender);fd.append('theme',state.theme.id);fd.append('themeName',state.theme.name);fd.append('babyName',state.babyName);fd.append('babyMonths',state.babyMonths);fd.append('photoNotes',state.photoNotes);fd.append('minimalist',state.minimalist?'true':'false');fd.append('photos',state.photos);fd.append('cake',state.cake?'1':'0');fd.append('extraPeople',state.extraPeople);fd.append('total',total());const paidEntitlementOrderId=localStorage.getItem('studio_paid_entitlement_order_id');if(paidEntitlementOrderId)fd.append('paidEntitlementOrderId',paidEntitlementOrderId);const r=await fetch(cfg.apiEndpoint,{method:'POST',body:fd});const j=await r.json();if(!r.ok)throw new Error(j.error||'Não foi possível gerar a prévia.');
+document.querySelector('#generate').onclick=async()=>{validatePersonalization();if(!state.theme||!photo.files[0]||!state.babyName||!state.babyMonths)return alert('Preencha o nome e a idade do bebê e selecione a foto.');if(localStorage.getItem('studio_preview_used')==='1'&&!state.orderId&&!localStorage.getItem('studio_test_device_secret')){alert('A prévia gratuita deste dispositivo já foi utilizada. Para ajustes ou um novo tema, fale conosco no WhatsApp.');return;}metaTrack('PreviewStarted',trackingContext());const btn=document.querySelector('#generate');btn.disabled=true;btn.textContent='CRIANDO SUA PRÉVIA...';if(!state.orderId){state.orderId=crypto.randomUUID();sessionStorage.setItem('studio_order_id',state.orderId);}startProgress();try{const uploadImage=await prepareUploadImage(photo.files[0]);const fd=new FormData();fd.append('image',uploadImage);fd.append('orderId',state.orderId);fd.append('deviceId',deviceId);const testDeviceSecret=localStorage.getItem('studio_test_device_secret');if(testDeviceSecret)fd.append('testDeviceSecret',testDeviceSecret);fd.append('gender',state.gender);fd.append('theme',state.theme.id);fd.append('themeName',state.theme.name);fd.append('babyName',state.babyName);fd.append('babyMonths',state.babyMonths);fd.append('photoNotes',state.photoNotes);fd.append('minimalist',state.minimalist?'true':'false');fd.append('photos',state.photos);fd.append('cake',state.cake?'1':'0');fd.append('extraPeople',state.extraPeople);fd.append('total',total());const paidEntitlementOrderId=localStorage.getItem('studio_paid_entitlement_order_id');if(paidEntitlementOrderId)fd.append('paidEntitlementOrderId',paidEntitlementOrderId);const r=await fetch(cfg.apiEndpoint,{method:'POST',body:fd});const j=await r.json();if(!r.ok)throw new Error(j.error||'Não foi possível gerar a prévia.');
 if(j.paid&&j.downloadUrl){
   finishProgress();
   document.querySelector('#previewArea').classList.add('hidden');
@@ -100,7 +116,7 @@ if(j.paid&&j.downloadUrl){
   if(!(j.remainingGenerations>0))localStorage.removeItem('studio_paid_entitlement_order_id');
   document.querySelector('#paidArea').scrollIntoView({behavior:'smooth'});
 }else{
-  localStorage.setItem('studio_preview_used','1');finishProgress();showPreview(j.previewUrl);metaTrack('PreviewGenerated',trackingContext());
+  if(!j.testDevice)localStorage.setItem('studio_preview_used','1');finishProgress();showPreview(j.previewUrl);metaTrack('PreviewGenerated',trackingContext());
 }}catch(e){stopProgress();alert(e.message)}finally{btn.disabled=false;btn.textContent='GERAR PRÉVIA • PAGUE SÓ SE GOSTAR';}};
 document.querySelector('#buyButton').onclick=()=>{if(!state.orderId)return alert('Gere sua prévia primeiro.');const finalTotal=total();const checkout=cfg.kiwify?.byTotal?.[finalTotal];if(!checkout)return alert(`Ainda não há checkout configurado para ${money(finalTotal)}. Fale conosco no WhatsApp para concluir seu pedido.`);metaTrack('InitiateCheckout',trackingContext(),true);metaTrack('KiwifyRedirect',trackingContext());sessionStorage.setItem('studio_waiting_payment','1');const checkoutUrl=new URL(checkout);checkoutUrl.searchParams.set('s1',state.orderId);window.location.href=checkoutUrl.toString();};
 async function checkPayment(){
