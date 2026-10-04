@@ -29,7 +29,10 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(express.json({ limit: '1mb' }));
+app.use(express.json({
+  limit: '1mb',
+  verify: (req, _res, buf) => { req.rawBody = Buffer.from(buf); }
+}));
 app.use(express.static(__dirname));
 
 const BUCKET = 'studio-infinity-images';
@@ -251,12 +254,90 @@ app.get('/api/order-status', async (req, res) => {
   }
 });
 
-// Estrutura pronta. A confirmação automática será ligada depois de capturarmos
-// um webhook TESTE real da Kiwify e validarmos quais campos identificam compra/oferta.
-app.post('/api/kiwify-webhook', async (req, res) => {
-  console.log('Kiwify webhook recebido:', JSON.stringify(req.body).slice(0, 4000));
-  return res.status(200).json({ ok: true });
-});
+function safeEqualHex(a, b) {
+  try {
+    const aa = Buffer.from(String(a || '').trim().toLowerCase(), 'hex');
+    const bb = Buffer.from(String(b || '').trim().toLowerCase(), 'hex');
+    return aa.length > 0 && aa.length === bb.length && crypto.timingSafeEqual(aa, bb);
+  } catch { return false; }
+}
+
+function verifyKiwifySignature(req) {
+  const token = process.env.KIWIFY_WEBHOOK_TOKEN;
+  const signature = String(req.query.signature || '');
+  if (!token || !signature || !req.rawBody) return false;
+  const expected = crypto.createHmac('sha1', token).update(req.rawBody).digest('hex');
+  return safeEqualHex(signature, expected);
+}
+
+function deepFindKey(value, wanted, depth = 0) {
+  if (!value || typeof value !== 'object' || depth > 6) return null;
+  for (const [k, v] of Object.entries(value)) {
+    if (wanted.includes(String(k).toLowerCase()) && typeof v === 'string' && v) return v;
+    if (v && typeof v === 'object') {
+      const found = deepFindKey(v, wanted, depth + 1);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
+function kiwifyOrderId(body) {
+  // O site envia o UUID da prévia no parâmetro de rastreamento s1 do checkout.
+  return deepFindKey(body, ['s1']);
+}
+
+function kiwifyPaid(body) {
+  const status = String(
+    body?.order_status || body?.status || body?.order?.order_status || body?.order?.status || ''
+  ).toLowerCase();
+  return ['paid', 'approved', 'approved_payment', 'compra_aprovada'].includes(status);
+}
+
+async function handleKiwifyWebhook(req, res) {
+  try {
+    if (!process.env.KIWIFY_WEBHOOK_TOKEN) {
+      console.error('Kiwify: KIWIFY_WEBHOOK_TOKEN ausente');
+      return res.status(503).json({ ok: false, error: 'webhook_not_configured' });
+    }
+    if (!verifyKiwifySignature(req)) {
+      console.warn('Kiwify: assinatura inválida');
+      return res.status(401).json({ ok: false, error: 'invalid_signature' });
+    }
+
+    // Testes da Kiwify devem receber 2xx mesmo quando não correspondem a uma prévia real.
+    const orderId = kiwifyOrderId(req.body);
+    const paid = kiwifyPaid(req.body);
+    const kiwifyId = String(req.body?.order_id || req.body?.order?.order_id || req.body?.id || '');
+
+    console.log('Kiwify webhook válido', JSON.stringify({ paid, orderId: orderId || null, kiwifyId: kiwifyId || null }));
+
+    if (!paid || !orderId || !/^[0-9a-f-]{36}$/i.test(orderId)) {
+      return res.status(200).json({ ok: true, processed: false });
+    }
+
+    const order = await loadOrder(orderId);
+    if (!order) return res.status(200).json({ ok: true, processed: false, reason: 'order_not_found' });
+
+    // Idempotente: reenvios do mesmo webhook não liberam nada duas vezes.
+    if (order.payment_status !== 'paid') {
+      order.payment_status = 'paid';
+      order.status = 'paid';
+      order.paid_at = new Date().toISOString();
+      order.kiwify_order_id = kiwifyId || null;
+      await saveOrder(order);
+    }
+
+    return res.status(200).json({ ok: true, processed: true });
+  } catch (e) {
+    console.error('Kiwify webhook error', e);
+    return res.status(500).json({ ok: false });
+  }
+}
+
+// URL usada na Kiwify. Mantemos também a rota antiga como alias para compatibilidade.
+app.post('/api/kiwify/webhook', handleKiwifyWebhook);
+app.post('/api/kiwify-webhook', handleKiwifyWebhook);
 
 app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
 if (require.main === module) app.listen(process.env.PORT || 3000);

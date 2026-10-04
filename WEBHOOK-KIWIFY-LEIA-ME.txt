@@ -1,0 +1,18 @@
+STUDIO INFINITY IA — WEBHOOK KIWIFY
+
+1. Suba todos os arquivos deste ZIP no mesmo repositório do GitHub.
+2. Na Vercel > Environment Variables, crie um Secret chamado:
+   KIWIFY_WEBHOOK_TOKEN
+   Valor: o Token mostrado na tela do webhook da Kiwify.
+   Marque Production, Preview e Development.
+3. Faça Redeploy na Vercel depois de salvar a variável.
+4. Na Kiwify use a URL:
+   https://criesuafoto.vercel.app/api/kiwify/webhook
+5. Evento: Compra aprovada.
+6. Clique em Testar Webhook. O esperado na Vercel é POST 200 (não 404).
+
+COMO O PEDIDO É VINCULADO
+O site acrescenta s1=<orderId> ao checkout Kiwify. A Kiwify preserva parâmetros de rastreamento e o webhook devolve esse dado. O backend usa esse UUID para liberar somente a imagem correspondente.
+
+SEGURANÇA
+O token fica somente na Vercel. O backend valida a assinatura HMAC-SHA1 enviada pela Kiwify antes de processar o pagamento. O endpoint é idempotente para suportar reenvios.
