@@ -245,3 +245,48 @@
     text-align:center!important;
   }
 }
+
+
+/* CORREÇÃO DEFINITIVA — textos acima de "Clientes reais" */
+.pre-proof-copy{
+  width:100%!important;
+  max-width:980px!important;
+  margin:0 auto 28px!important;
+  padding:0 20px!important;
+  box-sizing:border-box!important;
+  text-align:center!important;
+}
+
+.pre-proof-copy .pain-copy,
+.pre-proof-copy .hero-sub{
+  display:block!important;
+  width:100%!important;
+  max-width:900px!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+  padding-left:0!important;
+  padding-right:0!important;
+  text-align:center!important;
+}
+
+.pre-proof-copy .pain-copy{
+  margin-top:0!important;
+  margin-bottom:14px!important;
+}
+
+.pre-proof-copy .hero-sub{
+  margin-top:0!important;
+  margin-bottom:0!important;
+}
+
+@media(max-width:680px){
+  .pre-proof-copy{
+    max-width:100%!important;
+    padding:0 18px!important;
+  }
+  .pre-proof-copy .pain-copy,
+  .pre-proof-copy .hero-sub{
+    max-width:100%!important;
+    text-align:center!important;
+  }
+}
