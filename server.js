@@ -117,26 +117,42 @@ function clientFingerprint(req, deviceId) {
 }
 
 async function createWatermarkedPreview(imageBuffer) {
-  const meta = await sharp(imageBuffer).metadata();
-  const width = meta.width || 1024;
-  const height = meta.height || 1536;
-  const fontSize = Math.max(24, Math.round(width / 22));
-  let text = '';
-  for (let y = -height; y < height * 2; y += Math.round(fontSize * 4.2)) {
-    text += `<text x="${-width * 0.35}" y="${y}" font-size="${fontSize}" font-family="Arial, sans-serif" font-weight="700" fill="rgba(255,255,255,.42)" stroke="rgba(0,0,0,.20)" stroke-width="1">STUDIO INFINITY IA  •  PRÉVIA  •  STUDIO INFINITY IA  •  PRÉVIA</text>`;
+  // A marca d'água é incorporada aos pixels; bloquear clique direito sozinho não protege a imagem.
+  const base = sharp(imageBuffer).resize({ width: 800, height: 1000, fit: 'cover' });
+  const logoPath = path.join(__dirname, 'logo.jpeg');
+  let logoData = '';
+  try { logoData = `data:image/jpeg;base64,${require('fs').readFileSync(logoPath).toString('base64')}`; } catch {}
+  const width = 800, height = 1000;
+  const rows = [];
+  for (let y = -100; y < 1120; y += 125) {
+    rows.push(`<text x="-180" y="${y}" font-size="31" font-family="Arial,sans-serif" font-weight="800" letter-spacing="2" fill="rgba(255,255,255,.48)" stroke="rgba(0,0,0,.22)" stroke-width="1">STUDIO INFINITY IA  •  PRÉVIA  •  STUDIO INFINITY IA  •  PRÉVIA</text>`);
   }
-  const svg = Buffer.from(`<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg"><g transform="rotate(-28 ${width/2} ${height/2})">${text}</g><rect x="0" y="${height-90}" width="${width}" height="90" fill="rgba(5,8,23,.58)"/><text x="${width/2}" y="${height-35}" text-anchor="middle" font-size="${Math.max(24, Math.round(width/28))}" font-family="Arial, sans-serif" font-weight="700" fill="white">PRÉVIA • PAGUE SOMENTE SE GOSTAR</text></svg>`);
-  return sharp(imageBuffer).composite([{ input: svg, blend: 'over' }]).jpeg({ quality: 88, mozjpeg: true }).toBuffer();
+  const logos = logoData ? [110,350,590,830].map((y,i)=>`<image href="${logoData}" x="${i%2?500:95}" y="${y}" width="150" height="150" opacity=".27" preserveAspectRatio="xMidYMid slice"/>`).join('') : '';
+  const svg = Buffer.from(`<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg"><g transform="rotate(-27 ${width/2} ${height/2})">${rows.join('')}</g>${logos}<rect x="0" y="925" width="800" height="75" fill="rgba(5,8,23,.72)"/><text x="400" y="970" text-anchor="middle" font-size="24" font-family="Arial,sans-serif" font-weight="800" fill="white">PRÉVIA • PAGUE SOMENTE SE GOSTAR</text></svg>`);
+  return base.composite([{ input: svg, blend: 'over' }]).jpeg({ quality: 84, mozjpeg: true }).toBuffer();
 }
 
 function buildPrompt(body) {
   const base = THEME_PROMPTS[body.theme];
   if (!base) throw new Error('Tema não disponível para geração automática.');
+  const name = String(body.babyName || '').trim().slice(0, 40);
+  const months = Math.max(1, Math.min(36, Number(body.babyMonths || 0)));
+  const notes = String(body.photoNotes || '').trim().slice(0, 500);
   const additions = [];
-  if (body.cake === '1') additions.push('Include a tasteful themed cake. Leave a clean area where a name/age can be integrated naturally if supplied later.');
+  if (body.cake === '1') additions.push('Inclua um bolo temático elegante e minimalista, integrado naturalmente ao cenário.');
   const people = Math.max(0, Math.min(3, Number(body.extraPeople || 0)));
-  if (people) additions.push(`The requested composition may include up to ${people} additional people, but never invent a real person's identity if their reference photo was not provided. Keep the uploaded subject as the primary identity reference.`);
-  return `EDIT the uploaded photograph into a finished professional photo session. ${base} IMPORTANT: preserve the uploaded subject's recognizable identity and facial likeness as faithfully as possible. Keep anatomy realistic. Do not add watermarks or studio equipment. Vertical portrait composition, polished professional photography, realistic skin texture, realistic lighting, no AI-looking artifacts. ${additions.join(' ')}`;
+  if (people) additions.push(`A composição pode incluir até ${people} pessoa(s) adicional(is), mas nunca invente a identidade de uma pessoa real sem foto de referência.`);
+  if (notes) additions.push(`Preferências específicas da cliente: ${notes}. Siga-as quando forem compatíveis com uma fotografia natural e segura.`);
+  return `EDITE a fotografia enviada e transforme-a em um ensaio fotográfico profissional. ${base}
+REGRAS OBRIGATÓRIAS:
+- Estética padrão Studio Infinity IA: MINIMALISTA, elegante, natural, ultrarrealista, poucos elementos, cenário limpo e acabamento premium.
+- Composição vertical EXATAMENTE em proporção 4:5.
+- Preserve com máxima fidelidade a identidade, o rosto, os traços faciais, tom de pele, cabelo, expressão e proporções da pessoa da foto de referência. Anatomia realista e textura natural de pele; sem aparência artificial de IA.
+- O nome do bebê é "${name}" e está fazendo ${months} ${months === 1 ? 'mês' : 'meses'}.
+- Se houver QUALQUER texto visível na imagem (nome, idade, placa, letreiro, bolo ou decoração), escreva SOMENTE em PORTUGUÊS DO BRASIL. Nunca gere palavras em inglês. Use exatamente o nome "${name}" e, quando a idade aparecer, use "${months} ${months === 1 ? 'mês' : 'meses'}".
+- Não adicione marca-d'água; ela será aplicada pelo sistema depois.
+- Não mostre equipamentos de estúdio.
+${additions.join('\n')}`;
 }
 
 async function callOpenAIEdit(file, prompt) {
@@ -144,7 +160,7 @@ async function callOpenAIEdit(file, prompt) {
   fd.append('model', OPENAI_MODEL);
   fd.append('image[]', new Blob([file.buffer], { type: file.mimetype }), file.originalname || 'input.jpg');
   fd.append('prompt', prompt);
-  fd.append('size', '1024x1536');
+  fd.append('size', '1024x1280');
   fd.append('quality', 'max');
   fd.append('output_format', 'jpeg');
   fd.append('output_compression', '94');
@@ -183,6 +199,8 @@ app.post('/api/generate', upload.single('image'), async (req, res) => {
     if (!req.file) return res.status(400).json({ error: 'Selecione uma foto.' });
     if (!req.body.theme || req.body.theme === 'outros') return res.status(400).json({ error: 'Para temas personalizados, fale conosco no WhatsApp.' });
     if (!THEME_PROMPTS[req.body.theme]) return res.status(400).json({ error: 'Este tema ainda não está habilitado para prévia automática.' });
+    if (!String(req.body.babyName || '').trim()) return res.status(400).json({ error: 'Informe o nome do bebê.' });
+    if (!Number(req.body.babyMonths || 0)) return res.status(400).json({ error: 'Informe quantos meses o bebê está fazendo.' });
 
     const deviceId = String(req.body.deviceId || '');
     if (deviceId.length < 12) return res.status(400).json({ error: 'Atualize a página e tente novamente.' });
@@ -191,7 +209,8 @@ app.post('/api/generate', upload.single('image'), async (req, res) => {
     const existing = await storageGet(markerPath);
     if (existing) return res.status(429).json({ error: 'A prévia gratuita deste dispositivo já foi utilizada. Para outro tema ou ajustes, fale conosco no WhatsApp.' });
 
-    orderId = crypto.randomUUID();
+    const requestedOrderId = String(req.body.orderId || '');
+    orderId = /^[0-9a-f-]{36}$/i.test(requestedOrderId) ? requestedOrderId : crypto.randomUUID();
     const ext = req.file.mimetype === 'image/png' ? 'png' : req.file.mimetype === 'image/webp' ? 'webp' : 'jpg';
     const inputPath = `orders/${orderId}/input.${ext}`;
     const originalPath = `orders/${orderId}/original.jpg`;
@@ -204,6 +223,9 @@ app.post('/api/generate', upload.single('image'), async (req, res) => {
       status: 'generating',
       payment_status: 'pending',
       gender: req.body.gender || null,
+      baby_name: String(req.body.babyName || '').trim().slice(0, 40),
+      baby_months: Number(req.body.babyMonths || 0),
+      photo_notes: String(req.body.photoNotes || '').trim().slice(0, 500),
       theme: req.body.theme,
       theme_name: req.body.themeName || req.body.theme,
       photos: Number(req.body.photos || 1),
@@ -245,7 +267,11 @@ app.get('/api/order-status', async (req, res) => {
     if (!envReady()) return res.status(503).json({ paid: false });
     const order = await loadOrder(req.query.orderId);
     if (!order) return res.status(404).json({ paid: false });
-    if (order.payment_status !== 'paid') return res.json({ paid: false, status: order.status });
+    if (order.payment_status !== 'paid') {
+      const payload = { paid: false, status: order.status };
+      if (order.status === 'preview_ready') payload.previewUrl = await signedUrl(order.preview_path, 60 * 60);
+      return res.json(payload);
+    }
     const downloadUrl = await signedUrl(order.original_path, 60 * 15);
     return res.json({ paid: true, downloadUrl });
   } catch (e) {

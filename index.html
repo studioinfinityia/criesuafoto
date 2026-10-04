@@ -66,8 +66,19 @@
       </div>
     </section>
 
+    <section id="personalizar" class="flow-section order-section locked-section">
+      <div class="step-title"><i>3</i><div><span>PERSONALIZE A FOTO</span><h2>Conte os detalhes do bebê.</h2></div></div>
+      <div class="personalization-grid">
+        <label><span>Nome do bebê</span><input id="babyName" type="text" maxlength="40" placeholder="Ex.: Maria Antonella" autocomplete="off"></label>
+        <label><span>Quantos meses está fazendo?</span><input id="babyMonths" type="number" min="1" max="36" inputmode="numeric" placeholder="Ex.: 3"></label>
+        <label class="personalization-wide"><span>Observação de personalização <small>(opcional)</small></span><textarea id="photoNotes" maxlength="500" rows="4" placeholder="Ex.: vestido rosa claro, sem bolo, flores brancas, bebê deitadinha..."></textarea></label>
+      </div>
+      <p class="personalization-note">Essas informações serão consideradas na criação. O estilo Studio Infinity IA é sempre minimalista, natural e em formato vertical 4:5.</p>
+      <button class="primary full" id="confirmPersonalization" disabled>CONTINUAR PARA ESCOLHER O PACOTE</button>
+    </section>
+
     <section id="precos" class="flow-section order-section locked-section">
-      <div class="step-title"><i>3</i><div><span>ESCOLHA SEU PACOTE</span><h2>Quantas fotos você quer?</h2></div></div>
+      <div class="step-title"><i>4</i><div><span>ESCOLHA SEU PACOTE</span><h2>Quantas fotos você quer?</h2></div></div>
       <div class="price-step" id="priceStep">
         <div class="package-grid" id="packageGrid">
           <button class="package selected" data-package="1" data-price="20"><small>PARA EXPERIMENTAR</small><strong>1 foto</strong><em>R$ 20</em></button>
@@ -91,14 +102,19 @@
     </section>
 
     <section id="gerar" class="flow-section generator-section">
-      <div class="step-title"><i>4</i><div><span>SUA PRÉVIA</span><h2>Agora envie sua foto.</h2></div></div>
+      <div class="step-title"><i>5</i><div><span>SUA PRÉVIA</span><h2>Agora envie sua foto.</h2></div></div>
       <div class="chosen-order" id="chosenOrder"><span>Tema: <b id="chosenThemeLabel">Escolha um tema acima</b></span><span>Total se gostar: <b id="chosenTotal">R$ 20</b></span></div>
       <label class="upload-box" for="photo"><input id="photo" type="file" accept="image/jpeg,image/png,image/webp"><span class="upload-icon">＋</span><b>Selecionar minha foto</b><small>Use uma foto nítida, de preferência de frente</small><em id="fileName"></em></label>
       <button class="primary full" id="generate" disabled>GERAR PRÉVIA • PAGUE SÓ SE GOSTAR</button>
+      <div id="generationProgress" class="generation-progress hidden" aria-live="polite">
+        <div class="generation-progress-head"><b id="generationStage">Preparando sua foto...</b><strong id="generationPercent">0%</strong></div>
+        <div class="generation-track"><i id="generationBar"></i></div>
+        <p><b>Progresso estimado.</b> A criação pode levar alguns minutos. Para garantir que você veja o resultado assim que ficar pronto, mantenha esta página aberta.</p>
+      </div>
       <p class="micro"><b>Importante:</b> é permitida somente 1 prévia gratuita antes do pagamento. Ela existe para você conhecer nossa qualidade e comprar com segurança. Se gostar, esta mesma imagem será liberada sem marca-d'água após a confirmação do pagamento.</p>
 
       <div id="previewArea" class="preview-area hidden">
-        <div class="preview-card" id="previewCard"><img id="previewImage" alt="Prévia do ensaio"></div>
+        <div class="preview-card protected-preview" id="previewCard"><img id="previewImage" alt="Prévia protegida do ensaio" draggable="false" oncontextmenu="return false"><div class="preview-protection-note">PRÉVIA PROTEGIDA • LIBERADA SEM MARCA-D’ÁGUA APÓS O PAGAMENTO</div></div>
         <div class="preview-actions">
           <h3>Gostou do resultado?</h3>
           <p>Esta é a sua foto. Após o pagamento, liberamos <b>esta mesma imagem</b> em alta qualidade e sem marca-d'água.</p>
