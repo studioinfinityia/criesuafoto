@@ -117,25 +117,25 @@ function clientFingerprint(req, deviceId) {
 }
 
 async function createWatermarkedPreview(imageBuffer) {
-  // Proteção incorporada aos pixels: linhas horizontais repetidas por toda a foto.
+  // Usa a arte oficial enviada pelo Studio Infinity IA como marca-d'água.
+  // watermark-preview.png deve ficar na mesma pasta do server.js no deploy.
   const width = 800, height = 1000;
-  const base = sharp(imageBuffer).resize({ width, height, fit: 'cover' });
-  const phrase = 'STUDIO INFINITY IA   •   STUDIO INFINITY IA   •   STUDIO INFINITY IA   •   ';
-  const rows = [];
-  for (let y = 42; y < height; y += 48) {
-    const x = (Math.floor(y / 48) % 2 === 0) ? -80 : -230;
-    rows.push(
-      `<text x="${x}" y="${y}" font-size="23" font-family="Arial,Helvetica,sans-serif" font-weight="800" letter-spacing="1.2" fill="rgba(255,255,255,.58)" stroke="rgba(0,0,0,.42)" stroke-width="1.15">${phrase.repeat(5)}</text>`
-    );
-  }
-  const svg = Buffer.from(
-    `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
-      ${rows.join('')}
-      <rect x="0" y="948" width="800" height="52" fill="rgba(5,8,23,.78)"/>
-      <text x="400" y="980" text-anchor="middle" font-size="17" font-family="Arial,Helvetica,sans-serif" font-weight="800" fill="white">PRÉVIA PROTEGIDA • STUDIO INFINITY IA • LIBERADA SEM MARCA-D'ÁGUA APÓS O PAGAMENTO</text>
-    </svg>`
-  );
-  return base.composite([{ input: svg, blend: 'over' }]).jpeg({ quality: 86, mozjpeg: true }).toBuffer();
+
+  const base = await sharp(imageBuffer)
+    .resize({ width, height, fit: 'cover' })
+    .jpeg({ quality: 88, mozjpeg: true })
+    .toBuffer();
+
+  const watermarkPath = path.join(__dirname, 'watermark-preview.png');
+  const watermark = await sharp(watermarkPath)
+    .resize({ width, height, fit: 'fill' })
+    .png()
+    .toBuffer();
+
+  return sharp(base)
+    .composite([{ input: watermark, blend: 'over' }])
+    .jpeg({ quality: 88, mozjpeg: true })
+    .toBuffer();
 }
 
 function buildPrompt(body) {
@@ -145,7 +145,7 @@ function buildPrompt(body) {
   const months = Math.max(1, Math.min(36, Number(body.babyMonths || 0)));
   const notes = String(body.photoNotes || '').trim().slice(0, 500);
   const additions = [];
-  if (body.cake === '1') additions.push('Inclua um bolo temático elegante e minimalista, integrado naturalmente ao cenário.');
+  if (body.cake === '1') additions.push(`Inclua um bolo temático bonito e elegante, integrado naturalmente ao cenário e coerente com o tema escolhido. O bolo deve trazer de forma legível o nome "${name}" e a idade "${months} ${months === 1 ? 'mês' : 'meses'}", ou somente a idade quando isso resultar em composição visual mais natural. Todo texto deve estar em português do Brasil.`);
   const people = Math.max(0, Math.min(3, Number(body.extraPeople || 0)));
   if (people) additions.push(`A composição pode incluir até ${people} pessoa(s) adicional(is), mas nunca invente a identidade de uma pessoa real sem foto de referência.`);
   if (notes) additions.push(`Preferências específicas da cliente: ${notes}. Siga-as quando forem compatíveis com uma fotografia natural e segura.`);
@@ -153,7 +153,12 @@ function buildPrompt(body) {
 REGRAS OBRIGATÓRIAS:
 - Estética padrão Studio Infinity IA: MINIMALISTA, elegante, natural, ultrarrealista, poucos elementos, cenário limpo e acabamento premium.
 - Composição vertical EXATAMENTE em proporção 4:5.
-- Preserve com máxima fidelidade a identidade, o rosto, os traços faciais, tom de pele, cabelo, expressão e proporções da pessoa da foto de referência. Anatomia realista e textura natural de pele; sem aparência artificial de IA.
+- Preserve com máxima fidelidade a identidade, o rosto, os traços faciais, tom de pele, cabelo e expressão da pessoa da foto de referência. Anatomia realista e textura natural de pele; sem aparência artificial de IA.
+- REGRA DE IDADE E DESENVOLVIMENTO: adapte corpo, tamanho, estatura, proporções e postura para parecerem naturalmente compatíveis com ${months} ${months === 1 ? 'mês' : 'meses'}, sem envelhecer artificialmente o bebê e sem fazê-lo parecer uma criança maior.
+- Para 1 ou 2 meses: o bebê deve aparecer SEMPRE DEITADO, com corpo pequeno e delicado e pose natural para essa fase. Nunca sentado ou sustentando sozinho uma postura incompatível com a idade.
+- Para 3 ou 4 meses: o bebê pode aparecer DEITADO ou ENCOSTADINHO/COM APOIO, sempre de forma natural e compatível com a idade. Não o mostre sentado sozinho.
+- A partir de 5 meses: o bebê pode aparecer DEITADO, ENCOSTADO ou SENTADO, desde que a pose seja natural e plausível para a idade informada.
+- Se uma preferência da cliente, tema ou cenário pedir uma pose incompatível com a idade, esta REGRA DE IDADE tem prioridade.
 - O nome do bebê é "${name}" e está fazendo ${months} ${months === 1 ? 'mês' : 'meses'}.
 - Se houver QUALQUER texto visível na imagem (nome, idade, placa, letreiro, bolo ou decoração), escreva SOMENTE em PORTUGUÊS DO BRASIL. Nunca gere palavras em inglês. Use exatamente o nome "${name}" e, quando a idade aparecer, use "${months} ${months === 1 ? 'mês' : 'meses'}".
 - Não adicione marca-d'água; ela será aplicada pelo sistema depois.

@@ -216,3 +216,32 @@
 }
 .hero-proof-badge strong{font-size:18px!important}
 .hero-proof-badge span{font-size:11px!important;white-space:nowrap!important}
+
+
+/* Ajuste final 04/10 — bloco de texto acima das provas sociais */
+.pain-copy,
+.hero-subcopy{
+  width:100%!important;
+  max-width:760px!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+  text-align:center!important;
+}
+
+.pain-copy{
+  display:block!important;
+}
+
+.hero-subcopy{
+  display:block!important;
+}
+
+@media(max-width:680px){
+  .pain-copy,
+  .hero-subcopy{
+    max-width:100%!important;
+    padding-left:8px!important;
+    padding-right:8px!important;
+    text-align:center!important;
+  }
+}
