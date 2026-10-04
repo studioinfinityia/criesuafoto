@@ -161,7 +161,7 @@ async function callOpenAIEdit(file, prompt) {
   fd.append('image[]', new Blob([file.buffer], { type: file.mimetype }), file.originalname || 'input.jpg');
   fd.append('prompt', prompt);
   fd.append('size', '1024x1280');
-  fd.append('quality', 'max');
+  fd.append('quality', 'medium');
   fd.append('output_format', 'jpeg');
   fd.append('output_compression', '94');
   const r = await fetch('https://api.openai.com/v1/images/edits', {
