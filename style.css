@@ -169,3 +169,22 @@
   gap:3px!important;
 }
 .hero-proof{white-space:nowrap!important}
+
+/* +1000 centralizado acima da frase do hero */
+.hero-proof{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:100%!important;
+  gap:10px!important;
+  text-align:center!important;
+}
+.hero-proof-badge{
+  margin:0 auto!important;
+}
+.hero-proof-text{
+  display:block!important;
+  width:100%!important;
+  text-align:center!important;
+}
