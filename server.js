@@ -87,16 +87,6 @@ async function storageGet(objectPath) {
   return Buffer.from(await r.arrayBuffer());
 }
 
-async function storageDelete(objectPath) {
-  const r = await fetch(storageUrl(objectPath), {
-    method: 'DELETE',
-    headers: sbHeaders()
-  });
-  // Supabase may answer 404 when the marker was already removed. This is safe/idempotent.
-  if (r.status === 404 || r.status === 400) return;
-  if (!r.ok) throw new Error(`Supabase delete: ${r.status} ${await r.text()}`);
-}
-
 async function signedUrl(objectPath, expiresIn = 1800) {
   const url = `${process.env.SUPABASE_URL}/storage/v1/object/sign/${BUCKET}/${objectPath.split('/').map(encodeURIComponent).join('/')}`;
   const r = await fetch(url, {
@@ -127,19 +117,32 @@ function clientFingerprint(req, deviceId) {
 }
 
 async function createWatermarkedPreview(imageBuffer) {
-  // A marca d'água é incorporada aos pixels; bloquear clique direito sozinho não protege a imagem.
-  const base = sharp(imageBuffer).resize({ width: 800, height: 1000, fit: 'cover' });
+  // Marca d'água incorporada aos pixels: texto repetido em linhas por toda a foto.
+  const width = 800, height = 1000;
+  const base = sharp(imageBuffer).resize({ width, height, fit: 'cover' });
   const logoPath = path.join(__dirname, 'logo.jpeg');
   let logoData = '';
   try { logoData = `data:image/jpeg;base64,${require('fs').readFileSync(logoPath).toString('base64')}`; } catch {}
-  const width = 800, height = 1000;
+
+  const phrase = 'STUDIO INFINITY IA  •  PRÉVIA  •  ';
   const rows = [];
-  for (let y = -100; y < 1120; y += 125) {
-    rows.push(`<text x="-180" y="${y}" font-size="31" font-family="Arial,sans-serif" font-weight="800" letter-spacing="2" fill="rgba(255,255,255,.48)" stroke="rgba(0,0,0,.22)" stroke-width="1">STUDIO INFINITY IA  •  PRÉVIA  •  STUDIO INFINITY IA  •  PRÉVIA</text>`);
+  for (let y = -140; y < 1180; y += 72) {
+    const offset = ((Math.floor((y + 140) / 72) % 2) * -210) - 260;
+    rows.push(`<text x="${offset}" y="${y}" font-size="25" font-family="Arial,sans-serif" font-weight="800" letter-spacing="1.5" fill="rgba(255,255,255,.38)" stroke="rgba(0,0,0,.24)" stroke-width=".8">${phrase.repeat(8)}</text>`);
   }
-  const logos = logoData ? [110,350,590,830].map((y,i)=>`<image href="${logoData}" x="${i%2?500:95}" y="${y}" width="150" height="150" opacity=".27" preserveAspectRatio="xMidYMid slice"/>`).join('') : '';
-  const svg = Buffer.from(`<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg"><g transform="rotate(-27 ${width/2} ${height/2})">${rows.join('')}</g>${logos}<rect x="0" y="925" width="800" height="75" fill="rgba(5,8,23,.72)"/><text x="400" y="970" text-anchor="middle" font-size="24" font-family="Arial,sans-serif" font-weight="800" fill="white">PRÉVIA • PAGUE SOMENTE SE GOSTAR</text></svg>`);
-  return base.composite([{ input: svg, blend: 'over' }]).jpeg({ quality: 84, mozjpeg: true }).toBuffer();
+  const logos = logoData ? [90,310,530,750].map((y,i)=>
+    `<image href="${logoData}" x="${i%2 ? 520 : 110}" y="${y}" width="118" height="118" opacity=".20" preserveAspectRatio="xMidYMid slice"/>`
+  ).join('') : '';
+
+  const svg = Buffer.from(
+    `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+      <g transform="rotate(-22 ${width/2} ${height/2})">${rows.join('')}</g>
+      ${logos}
+      <rect x="0" y="944" width="800" height="56" fill="rgba(5,8,23,.74)"/>
+      <text x="400" y="979" text-anchor="middle" font-size="18" font-family="Arial,sans-serif" font-weight="800" fill="white">PRÉVIA PROTEGIDA • STUDIO INFINITY IA</text>
+    </svg>`
+  );
+  return base.composite([{ input: svg, blend: 'over' }]).jpeg({ quality: 86, mozjpeg: true }).toBuffer();
 }
 
 function buildPrompt(body) {
@@ -216,8 +219,42 @@ app.post('/api/generate', upload.single('image'), async (req, res) => {
     if (deviceId.length < 12) return res.status(400).json({ error: 'Atualize a página e tente novamente.' });
     const fingerprint = clientFingerprint(req, deviceId);
     const markerPath = `preview-limits/${fingerprint}.json`;
+
+    // Compra de R$ 25+ libera a próxima geração incluída no pedido.
+    // O direito é validado no servidor e não depende do navegador.
+    const entitlementId = String(req.body.paidEntitlementOrderId || '');
+    if (/^[0-9a-f-]{36}$/i.test(entitlementId)) {
+      const paidOrder = await loadOrder(entitlementId);
+      if (paidOrder && paidOrder.payment_status === 'paid' && Number(paidOrder.total || 0) >= 25) {
+        const allowed = Math.max(1, Number(paidOrder.photos || 1));
+        const used = Math.max(1, Number(paidOrder.generated_count || 1));
+        if (used < allowed) {
+          const next = used + 1;
+          const prompt = buildPrompt(req.body);
+          const generated = await callOpenAIEdit(req.file, prompt);
+          const paidPath = `orders/${entitlementId}/original-${next}.jpg`;
+          await storageUpload(paidPath, generated.buffer, 'image/jpeg');
+          paidOrder.generated_count = next;
+          paidOrder.status = 'paid';
+          paidOrder.last_generated_at = new Date().toISOString();
+          if (!Array.isArray(paidOrder.extra_original_paths)) paidOrder.extra_original_paths = [];
+          paidOrder.extra_original_paths.push(paidPath);
+          await saveOrder(paidOrder);
+          const downloadUrl = await signedUrl(paidPath, 60 * 15);
+          return res.json({
+            orderId: entitlementId,
+            paid: true,
+            downloadUrl,
+            generatedCount: next,
+            allowedGenerations: allowed,
+            remainingGenerations: Math.max(0, allowed - next)
+          });
+        }
+      }
+    }
+
     const existing = await storageGet(markerPath);
-    if (existing) return res.status(429).json({ error: 'A prévia gratuita deste dispositivo já foi utilizada. Para outro tema ou ajustes, fale conosco no WhatsApp.' });
+    if (existing) return res.status(429).json({ error: 'A prévia gratuita deste dispositivo já foi utilizada. Após uma compra de R$ 25 ou mais, uma nova geração é liberada automaticamente.' });
 
     const requestedOrderId = String(req.body.orderId || '');
     orderId = /^[0-9a-f-]{36}$/i.test(requestedOrderId) ? requestedOrderId : crypto.randomUUID();
@@ -245,7 +282,7 @@ app.post('/api/generate', upload.single('image'), async (req, res) => {
       input_path: inputPath,
       original_path: originalPath,
       preview_path: previewPath,
-      preview_fingerprint: fingerprint
+      generated_count: 0
     };
     await saveOrder(order);
 
@@ -256,6 +293,7 @@ app.post('/api/generate', upload.single('image'), async (req, res) => {
     await storageUpload(previewPath, previewBuffer, 'image/jpeg');
 
     order.status = 'preview_ready';
+    order.generated_count = 1;
     order.generated_at = new Date().toISOString();
     if (generated.usage) order.openai_usage = generated.usage;
     await saveOrder(order);
@@ -284,7 +322,15 @@ app.get('/api/order-status', async (req, res) => {
       return res.json(payload);
     }
     const downloadUrl = await signedUrl(order.original_path, 60 * 15);
-    return res.json({ paid: true, downloadUrl });
+    const allowedGenerations = Math.max(1, Number(order.photos || 1));
+    const generatedCount = Math.max(1, Number(order.generated_count || 1));
+    return res.json({
+      paid: true,
+      downloadUrl,
+      generatedCount,
+      allowedGenerations,
+      remainingGenerations: Math.max(0, allowedGenerations - generatedCount)
+    });
   } catch (e) {
     console.error('status error', e);
     return res.status(500).json({ paid: false });
@@ -363,15 +409,6 @@ async function handleKiwifyWebhook(req, res) {
       order.paid_at = new Date().toISOString();
       order.kiwify_order_id = kiwifyId || null;
       await saveOrder(order);
-
-      // Cada compra aprovada de pelo menos R$ 25 libera UMA nova prévia gratuita
-      // para o mesmo dispositivo que gerou este pedido. O próximo /api/generate
-      // recria o marcador e volta a bloquear até uma nova compra elegível.
-      if (Number(order.total || 0) >= 25 && order.preview_fingerprint) {
-        await storageDelete(`preview-limits/${order.preview_fingerprint}.json`);
-        order.preview_credit_released_at = new Date().toISOString();
-        await saveOrder(order);
-      }
     }
 
     return res.status(200).json({ ok: true, processed: true });
