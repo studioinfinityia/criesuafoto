@@ -105,4 +105,67 @@
 .minimalist-switch:after{content:"";position:absolute;width:16px;height:16px;left:3px;top:3px;border-radius:50%;background:white;transition:.2s}
 .minimalist-toggle input:checked + .minimalist-switch{background:linear-gradient(90deg,var(--cyan),var(--pink))}
 .minimalist-toggle input:checked + .minimalist-switch:after{transform:translateX(16px)}
-\n\n/* Topo de conversão + opção Minimalista */\n.impact-ticker{position:relative;z-index:30;width:100%;overflow:hidden;background:linear-gradient(90deg,var(--cyan),#7857ff,var(--pink));color:#fff;border-bottom:1px solid rgba(255,255,255,.16)}\n.impact-ticker-track{display:flex;width:max-content;align-items:center;gap:18px;padding:9px 0;font-size:12px;font-weight:900;letter-spacing:.75px;white-space:nowrap;text-transform:uppercase;animation:impactTicker 28s linear infinite}\n.impact-ticker-track i{font-style:normal;opacity:.75}\n@keyframes impactTicker{from{transform:translateX(0)}to{transform:translateX(-50%)}}\n.hero-proof{display:inline-flex;align-items:center;gap:8px;margin:0 auto 12px;padding:7px 13px;border:1px solid rgba(0,229,255,.28);border-radius:999px;background:rgba(0,229,255,.07);box-shadow:0 0 28px rgba(0,229,255,.08)}\n.hero-proof b{font-size:18px;color:var(--cyan)}\n.hero-proof span{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:#eef2ff}\n.pain-copy{max-width:720px!important;margin:16px auto 8px!important;font-size:17px!important;line-height:1.55!important;color:#dce2ff!important}\n.pain-copy b{color:#fff}\n.hero-subcopy{margin-top:8px!important}\n.minimalist-choice{display:flex!important;align-items:center;gap:12px;padding:14px 15px!important;border:1px solid rgba(0,229,255,.25)!important;border-radius:14px;background:linear-gradient(135deg,rgba(0,229,255,.055),rgba(213,56,255,.05));cursor:pointer}\n.minimalist-choice input{position:absolute;opacity:0;pointer-events:none}\n.minimalist-check{position:relative;width:44px;height:25px;min-width:44px;border-radius:999px;background:#252c46;border:1px solid #3c4568;transition:.2s}\n.minimalist-check:after{content:'';position:absolute;left:3px;top:3px;width:17px;height:17px;border-radius:50%;background:#fff;transition:.2s}\n.minimalist-choice input:checked + .minimalist-check{background:linear-gradient(90deg,var(--cyan),var(--pink));border-color:transparent;box-shadow:0 0 18px rgba(0,229,255,.18)}\n.minimalist-choice input:checked + .minimalist-check:after{transform:translateX(19px)}\n.minimalist-copy{display:flex;flex-direction:column;gap:3px}\n.minimalist-copy b{font-size:14px;color:#fff}.minimalist-copy small{font-size:12px;color:#aeb7d8;line-height:1.35}\n@media(max-width:680px){.impact-ticker-track{font-size:10px;padding:8px 0;gap:14px;animation-duration:24s}.hero-proof{margin-bottom:10px}.pain-copy{font-size:15px!important;line-height:1.5!important;padding:0 5px}.minimalist-choice{align-items:flex-start}.minimalist-check{margin-top:2px}}\n@media(prefers-reduced-motion:reduce){.impact-ticker-track{animation:none}}\n
+
+
+/* Topo de conversão + opção Minimalista */
+.impact-ticker{position:relative;z-index:30;width:100%;overflow:hidden;background:linear-gradient(90deg,var(--cyan),#7857ff,var(--pink));color:#fff;border-bottom:1px solid rgba(255,255,255,.16)}
+.impact-ticker-track{display:flex;width:max-content;align-items:center;gap:18px;padding:9px 0;font-size:12px;font-weight:900;letter-spacing:.75px;white-space:nowrap;text-transform:uppercase;animation:impactTicker 28s linear infinite}
+.impact-ticker-track i{font-style:normal;opacity:.75}
+@keyframes impactTicker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.hero-proof{display:inline-flex;align-items:center;gap:8px;margin:0 auto 12px;padding:7px 13px;border:1px solid rgba(0,229,255,.28);border-radius:999px;background:rgba(0,229,255,.07);box-shadow:0 0 28px rgba(0,229,255,.08)}
+.hero-proof b{font-size:18px;color:var(--cyan)}
+.hero-proof span{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:#eef2ff}
+.pain-copy{max-width:720px!important;margin:16px auto 8px!important;font-size:17px!important;line-height:1.55!important;color:#dce2ff!important}
+.pain-copy b{color:#fff}
+.hero-subcopy{margin-top:8px!important}
+.minimalist-choice{display:flex!important;align-items:center;gap:12px;padding:14px 15px!important;border:1px solid rgba(0,229,255,.25)!important;border-radius:14px;background:linear-gradient(135deg,rgba(0,229,255,.055),rgba(213,56,255,.05));cursor:pointer}
+.minimalist-choice input{position:absolute;opacity:0;pointer-events:none}
+.minimalist-check{position:relative;width:44px;height:25px;min-width:44px;border-radius:999px;background:#252c46;border:1px solid #3c4568;transition:.2s}
+.minimalist-check:after{content:'';position:absolute;left:3px;top:3px;width:17px;height:17px;border-radius:50%;background:#fff;transition:.2s}
+.minimalist-choice input:checked + .minimalist-check{background:linear-gradient(90deg,var(--cyan),var(--pink));border-color:transparent;box-shadow:0 0 18px rgba(0,229,255,.18)}
+.minimalist-choice input:checked + .minimalist-check:after{transform:translateX(19px)}
+.minimalist-copy{display:flex;flex-direction:column;gap:3px}
+.minimalist-copy b{font-size:14px;color:#fff}.minimalist-copy small{font-size:12px;color:#aeb7d8;line-height:1.35}
+@media(max-width:680px){.impact-ticker-track{font-size:10px;padding:8px 0;gap:14px;animation-duration:24s}.hero-proof{margin-bottom:10px}.pain-copy{font-size:15px!important;line-height:1.5!important;padding:0 5px}.minimalist-choice{align-items:flex-start}.minimalist-check{margin-top:2px}}
+@media(prefers-reduced-motion:reduce){.impact-ticker-track{animation:none}}
+
+/* Correção visual do topo e seletor minimalista */
+.impact-ticker{
+  height:36px!important;
+  display:flex!important;
+  align-items:center!important;
+  overflow:hidden!important;
+}
+.impact-ticker-track{
+  flex:none!important;
+  flex-wrap:nowrap!important;
+  height:36px!important;
+  padding:0!important;
+  line-height:36px!important;
+}
+.impact-ticker-track span,.impact-ticker-track i{display:inline-block!important;white-space:nowrap!important}
+.minimalist-choice{
+  position:relative!important;
+  display:flex!important;
+  flex-direction:row!important;
+  align-items:center!important;
+  gap:12px!important;
+}
+.minimalist-choice>input{
+  position:absolute!important;
+  width:1px!important;
+  height:1px!important;
+  opacity:0!important;
+  appearance:none!important;
+}
+.minimalist-check{
+  display:block!important;
+  flex:0 0 44px!important;
+}
+.minimalist-copy{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-start!important;
+  gap:3px!important;
+}
+.hero-proof{white-space:nowrap!important}
