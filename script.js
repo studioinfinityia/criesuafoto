@@ -7,17 +7,18 @@ const state = { gender:null, photos:1, basePrice:20, cake:false, extraPeople:0, 
 const deviceId = localStorage.getItem('studio_device_id') || (crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`);
 localStorage.setItem('studio_device_id', deviceId);
 
-// ---- Modo de teste privado ----
-// No iPhone, abra uma única vez: SEU_SITE/#studio-test=SEU_SEGREDO
-// O segredo fica salvo somente neste navegador. Depois, use o site normalmente.
+// ---- Modo de teste privado Studio Infinity IA ----
+// Abra uma única vez no aparelho autorizado:
+// https://studioinfinityia.github.io/criesuafoto/#studio-test=SEU_SEGREDO
 (function initPrivateTestMode(){
   const prefix = '#studio-test=';
   if (location.hash.startsWith(prefix)) {
     const secret = decodeURIComponent(location.hash.slice(prefix.length)).trim();
     if (secret) {
       localStorage.setItem('studio_test_device_secret', secret);
+      localStorage.removeItem('studio_preview_used');
       history.replaceState(null, '', location.pathname + location.search);
-      alert('Modo de teste ativado neste dispositivo.');
+      alert('Modo de teste ativado neste iPhone. Você pode gerar novas prévias para testes.');
     }
   }
 })();
@@ -116,7 +117,7 @@ if(j.paid&&j.downloadUrl){
   if(!(j.remainingGenerations>0))localStorage.removeItem('studio_paid_entitlement_order_id');
   document.querySelector('#paidArea').scrollIntoView({behavior:'smooth'});
 }else{
-  if(!j.testDevice)localStorage.setItem('studio_preview_used','1');finishProgress();showPreview(j.previewUrl);metaTrack('PreviewGenerated',trackingContext());
+  if(!j.testDevice)if(!j.testDevice)localStorage.setItem('studio_preview_used','1');finishProgress();showPreview(j.previewUrl);metaTrack('PreviewGenerated',trackingContext());
 }}catch(e){stopProgress();alert(e.message)}finally{btn.disabled=false;btn.textContent='GERAR PRÉVIA • PAGUE SÓ SE GOSTAR';}};
 document.querySelector('#buyButton').onclick=()=>{if(!state.orderId)return alert('Gere sua prévia primeiro.');const finalTotal=total();const checkout=cfg.kiwify?.byTotal?.[finalTotal];if(!checkout)return alert(`Ainda não há checkout configurado para ${money(finalTotal)}. Fale conosco no WhatsApp para concluir seu pedido.`);metaTrack('InitiateCheckout',trackingContext(),true);metaTrack('KiwifyRedirect',trackingContext());sessionStorage.setItem('studio_waiting_payment','1');const checkoutUrl=new URL(checkout);checkoutUrl.searchParams.set('s1',state.orderId);window.location.href=checkoutUrl.toString();};
 async function checkPayment(){

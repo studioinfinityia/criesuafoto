@@ -204,22 +204,14 @@ app.get('/api/health', async (_req, res) => {
 });
 
 
-function isAuthorizedTestDevice(req, deviceId) {
-  const configuredId = String(process.env.TEST_DEVICE_ID || '').trim();
+function isAuthorizedTestDevice(req) {
   const configuredSecret = String(process.env.TEST_DEVICE_SECRET || '').trim();
   const suppliedSecret = String(req.body.testDeviceSecret || '').trim();
+  if (!configuredSecret || !suppliedSecret) return false;
 
-  if (!configuredId || !configuredSecret || !deviceId || !suppliedSecret) return false;
-
-  const idOk = crypto.timingSafeEqual(
-    crypto.createHash('sha256').update(String(deviceId)).digest(),
-    crypto.createHash('sha256').update(configuredId).digest()
-  );
-  const secretOk = crypto.timingSafeEqual(
-    crypto.createHash('sha256').update(suppliedSecret).digest(),
-    crypto.createHash('sha256').update(configuredSecret).digest()
-  );
-  return idOk && secretOk;
+  const a = crypto.createHash('sha256').update(suppliedSecret).digest();
+  const b = crypto.createHash('sha256').update(configuredSecret).digest();
+  return crypto.timingSafeEqual(a, b);
 }
 
 app.post('/api/generate', upload.single('image'), async (req, res) => {
@@ -236,7 +228,7 @@ app.post('/api/generate', upload.single('image'), async (req, res) => {
     if (deviceId.length < 12) return res.status(400).json({ error: 'Atualize a página e tente novamente.' });
     const fingerprint = clientFingerprint(req, deviceId);
     const markerPath = `preview-limits/${fingerprint}.json`;
-    const testDevice = isAuthorizedTestDevice(req, deviceId);
+    const testDevice = isAuthorizedTestDevice(req);
 
     // Compra de R$ 25+ libera a próxima geração incluída no pedido.
     // O direito é validado no servidor e não depende do navegador.
