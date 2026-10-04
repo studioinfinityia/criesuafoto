@@ -117,29 +117,22 @@ function clientFingerprint(req, deviceId) {
 }
 
 async function createWatermarkedPreview(imageBuffer) {
-  // Marca d'água incorporada aos pixels: texto repetido em linhas por toda a foto.
+  // Proteção incorporada aos pixels: linhas horizontais repetidas por toda a foto.
   const width = 800, height = 1000;
   const base = sharp(imageBuffer).resize({ width, height, fit: 'cover' });
-  const logoPath = path.join(__dirname, 'logo.jpeg');
-  let logoData = '';
-  try { logoData = `data:image/jpeg;base64,${require('fs').readFileSync(logoPath).toString('base64')}`; } catch {}
-
-  const phrase = 'STUDIO INFINITY IA  •  PRÉVIA  •  ';
+  const phrase = 'STUDIO INFINITY IA   •   STUDIO INFINITY IA   •   STUDIO INFINITY IA   •   ';
   const rows = [];
-  for (let y = -140; y < 1180; y += 72) {
-    const offset = ((Math.floor((y + 140) / 72) % 2) * -210) - 260;
-    rows.push(`<text x="${offset}" y="${y}" font-size="25" font-family="Arial,sans-serif" font-weight="800" letter-spacing="1.5" fill="rgba(255,255,255,.38)" stroke="rgba(0,0,0,.24)" stroke-width=".8">${phrase.repeat(8)}</text>`);
+  for (let y = 42; y < height; y += 48) {
+    const x = (Math.floor(y / 48) % 2 === 0) ? -80 : -230;
+    rows.push(
+      `<text x="${x}" y="${y}" font-size="23" font-family="Arial,Helvetica,sans-serif" font-weight="800" letter-spacing="1.2" fill="rgba(255,255,255,.58)" stroke="rgba(0,0,0,.42)" stroke-width="1.15">${phrase.repeat(5)}</text>`
+    );
   }
-  const logos = logoData ? [90,310,530,750].map((y,i)=>
-    `<image href="${logoData}" x="${i%2 ? 520 : 110}" y="${y}" width="118" height="118" opacity=".20" preserveAspectRatio="xMidYMid slice"/>`
-  ).join('') : '';
-
   const svg = Buffer.from(
     `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
-      <g transform="rotate(-22 ${width/2} ${height/2})">${rows.join('')}</g>
-      ${logos}
-      <rect x="0" y="944" width="800" height="56" fill="rgba(5,8,23,.74)"/>
-      <text x="400" y="979" text-anchor="middle" font-size="18" font-family="Arial,sans-serif" font-weight="800" fill="white">PRÉVIA PROTEGIDA • STUDIO INFINITY IA</text>
+      ${rows.join('')}
+      <rect x="0" y="948" width="800" height="52" fill="rgba(5,8,23,.78)"/>
+      <text x="400" y="980" text-anchor="middle" font-size="17" font-family="Arial,Helvetica,sans-serif" font-weight="800" fill="white">PRÉVIA PROTEGIDA • STUDIO INFINITY IA • LIBERADA SEM MARCA-D'ÁGUA APÓS O PAGAMENTO</text>
     </svg>`
   );
   return base.composite([{ input: svg, blend: 'over' }]).jpeg({ quality: 86, mozjpeg: true }).toBuffer();

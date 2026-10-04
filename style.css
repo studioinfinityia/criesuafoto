@@ -92,3 +92,16 @@
   .confidence small{display:none!important}
   .theme-cover{height:125px!important;background-position:center 16%!important}
 }
+
+.minimalist-toggle{
+  display:flex;align-items:center;gap:10px;margin-top:12px;padding:11px 12px;
+  border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,.025);
+  cursor:pointer;user-select:none
+}
+.minimalist-toggle input{position:absolute;opacity:0;pointer-events:none}
+.minimalist-toggle>span:last-child{display:flex;flex-direction:column;gap:2px;color:#e9edff;font-size:13px}
+.minimalist-toggle small{color:#98a2c7;font-size:11px;line-height:1.3}
+.minimalist-switch{width:38px;height:22px;min-width:38px;border-radius:999px;background:#2b314b;position:relative;transition:.2s}
+.minimalist-switch:after{content:"";position:absolute;width:16px;height:16px;left:3px;top:3px;border-radius:50%;background:white;transition:.2s}
+.minimalist-toggle input:checked + .minimalist-switch{background:linear-gradient(90deg,var(--cyan),var(--pink))}
+.minimalist-toggle input:checked + .minimalist-switch:after{transform:translateX(16px)}
