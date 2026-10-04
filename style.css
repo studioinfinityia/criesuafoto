@@ -188,3 +188,31 @@
   width:100%!important;
   text-align:center!important;
 }
+
+/* Refinamento do selo +1000: compacto, sem ocupar a largura toda */
+.hero-proof{
+  gap:8px!important;
+}
+.hero-proof-badge{
+  width:auto!important;
+  min-width:0!important;
+  max-width:max-content!important;
+  display:inline-flex!important;
+  flex-direction:row!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:7px!important;
+  padding:8px 18px!important;
+  border-radius:999px!important;
+  margin:0 auto!important;
+  line-height:1!important;
+}
+.hero-proof-badge strong,
+.hero-proof-badge span{
+  display:inline!important;
+  margin:0!important;
+  padding:0!important;
+  line-height:1!important;
+}
+.hero-proof-badge strong{font-size:18px!important}
+.hero-proof-badge span{font-size:11px!important;white-space:nowrap!important}
