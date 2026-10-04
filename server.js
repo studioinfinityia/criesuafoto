@@ -87,6 +87,16 @@ async function storageGet(objectPath) {
   return Buffer.from(await r.arrayBuffer());
 }
 
+async function storageDelete(objectPath) {
+  const r = await fetch(storageUrl(objectPath), {
+    method: 'DELETE',
+    headers: sbHeaders()
+  });
+  // Supabase may answer 404 when the marker was already removed. This is safe/idempotent.
+  if (r.status === 404 || r.status === 400) return;
+  if (!r.ok) throw new Error(`Supabase delete: ${r.status} ${await r.text()}`);
+}
+
 async function signedUrl(objectPath, expiresIn = 1800) {
   const url = `${process.env.SUPABASE_URL}/storage/v1/object/sign/${BUCKET}/${objectPath.split('/').map(encodeURIComponent).join('/')}`;
   const r = await fetch(url, {
@@ -234,7 +244,8 @@ app.post('/api/generate', upload.single('image'), async (req, res) => {
       total: Number(req.body.total || 0),
       input_path: inputPath,
       original_path: originalPath,
-      preview_path: previewPath
+      preview_path: previewPath,
+      preview_fingerprint: fingerprint
     };
     await saveOrder(order);
 
@@ -352,6 +363,15 @@ async function handleKiwifyWebhook(req, res) {
       order.paid_at = new Date().toISOString();
       order.kiwify_order_id = kiwifyId || null;
       await saveOrder(order);
+
+      // Cada compra aprovada de pelo menos R$ 25 libera UMA nova prévia gratuita
+      // para o mesmo dispositivo que gerou este pedido. O próximo /api/generate
+      // recria o marcador e volta a bloquear até uma nova compra elegível.
+      if (Number(order.total || 0) >= 25 && order.preview_fingerprint) {
+        await storageDelete(`preview-limits/${order.preview_fingerprint}.json`);
+        order.preview_credit_released_at = new Date().toISOString();
+        await saveOrder(order);
+      }
     }
 
     return res.status(200).json({ ok: true, processed: true });
