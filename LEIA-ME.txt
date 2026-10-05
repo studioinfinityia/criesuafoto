@@ -1,4 +1,4 @@
-ATUALIZACAO - NOVOS TEMAS DE MENINOS
+ATUALIZACAO - NOVOS TEMAS DE MENINAS
 
 Substitua:
 - server.js
@@ -7,10 +7,13 @@ Substitua:
 Adicione as 10 imagens .jpeg deste pacote na mesma pasta dos demais arquivos do site.
 
 Novos temas:
-- Fazendinha
-- Chaves
-- 3 Palavrinhas
-- Eleicao
-- Sonic
+- Branca de Neve
+- Galinha Pintadinha
+- Sítio do Picapau Amarelo
+- Ovelhinha
+- Monstros S.A.
 
-Tambem foi preservado o modo de teste do iPhone e corrigido o seletor Minimalista para realmente enviar a escolha ao servidor.
+Esta atualização já foi montada em cima da versão que também inclui:
+- modo de teste do iPhone
+- ajuste do seletor Minimalista
+- novos temas de meninos adicionados anteriormente
