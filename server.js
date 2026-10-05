@@ -162,46 +162,30 @@ function buildPrompt(body) {
   if (!base) throw new Error('Tema não disponível para geração automática.');
 
   const name = String(body.babyName || '').trim().slice(0, 40);
-  const months = Math.max(1, Math.min(36, Number(body.babyMonths || 0)));
+  const occasion = String(body.occasion || 'mesversario').toLowerCase() === 'aniversario' ? 'aniversario' : 'mesversario';
+  const rawAge = Number(body.babyMonths || 0);
+  const age = occasion === 'mesversario' ? Math.max(1, Math.min(11, rawAge)) : Math.max(1, Math.min(99, rawAge));
+  const ageText = occasion === 'mesversario' ? `${age} ${age === 1 ? 'mês' : 'meses'}` : `${age} ${age === 1 ? 'ano' : 'anos'}`;
+  const eventLabel = occasion === 'mesversario' ? 'mesversário' : 'aniversário';
+  const subjectLabel = occasion === 'mesversario' ? 'bebê' : 'criança';
   const notes = String(body.photoNotes || '').trim().slice(0, 500);
   const minimalist = String(body.minimalist || '').toLowerCase() === 'true';
 
   const additions = [];
-  if (body.cake === '1') {
-    additions.push(`Inclua um bolo temático bonito, delicado e bem integrado ao cenário, coerente com o tema escolhido. O bolo deve trazer de forma legível o nome "${name}" e a idade "${months} ${months === 1 ? 'mês' : 'meses'}", ou somente a idade quando isso resultar em composição visual mais natural. Todo texto deve estar em português do Brasil.`);
-  }
-
+  if (body.cake === '1') additions.push(`Inclua um bolo temático bonito, delicado e bem integrado ao cenário, coerente com o tema escolhido. O bolo deve trazer de forma legível o nome "${name}" e a idade "${ageText}", ou somente a idade quando isso resultar em composição visual mais natural. Todo texto deve estar em português do Brasil.`);
   const people = Math.max(0, Math.min(3, Number(body.extraPeople || 0)));
   if (people) additions.push(`A composição pode incluir até ${people} pessoa(s) adicional(is), mas nunca invente a identidade de uma pessoa real sem foto de referência.`);
   if (notes) additions.push(`Preferências específicas da cliente: ${notes}. Siga-as quando forem compatíveis com uma fotografia natural e segura.`);
 
   const styleBlock = minimalist
-    ? `ESTILO SELECIONADO: MINIMALISTA.
-- Gere uma foto realmente mais minimalista, com cenário mais limpo, menos elementos decorativos, composição mais leve, organizada e elegante.
-- Reduza a quantidade de objetos e enfeites. Evite cenário poluído, carregado ou excessivamente decorado.
-- Mantenha maior destaque no bebê, principalmente no rosto, com o tema aparecendo de forma delicada e sutil.
-- O resultado deve lembrar ensaios minimalistas de mesversário: fundo macio e limpo, poucos elementos temáticos, visual delicado, natural e premium.`
-    : `ESTILO SELECIONADO: TEMÁTICO TRADICIONAL.
-- Gere uma composição temática bonita, harmoniosa e realista, com elementos decorativos compatíveis com o tema.
-- O cenário pode ter mais elementos do que a versão minimalista, mas sem exagero e sempre mantendo o bebê como foco principal.`;
+    ? `- ESTILO SELECIONADO: MINIMALISTA.\n- Gere uma foto realmente mais minimalista, com cenário mais limpo, menos elementos decorativos, composição mais leve, organizada e elegante.\n- Reduza a quantidade de objetos e enfeites. Evite cenário poluído, carregado ou excessivamente decorado.\n- Mantenha maior destaque na criança, principalmente no rosto, com o tema aparecendo de forma delicada e sutil.\n- O resultado deve lembrar um ensaio infantil minimalista premium, natural e realista.`
+    : `- ESTILO SELECIONADO: TEMÁTICO TRADICIONAL.\n- Gere uma composição temática bonita, harmoniosa e realista, com elementos decorativos compatíveis com o tema.\n- O cenário pode ter mais elementos do que a versão minimalista, mas sem exagero e sempre mantendo a criança como foco principal.`;
 
-  return `EDITE a fotografia enviada e transforme-a em um ensaio fotográfico profissional de mesversário. ${base}
+  const ageRules = occasion === 'mesversario'
+    ? `- REGRA DE IDADE E DESENVOLVIMENTO: adapte corpo, tamanho, estatura, proporções e postura para parecerem naturalmente compatíveis com ${ageText}, sem envelhecer artificialmente o bebê.\n- Para 1 ou 2 meses: o bebê deve aparecer SEMPRE DEITADO, com corpo pequeno e delicado e pose natural para essa fase. Nunca sentado.\n- Para 3 ou 4 meses: o bebê pode aparecer DEITADO ou ENCOSTADINHO/COM APOIO. Não o mostre sentado sozinho.\n- A partir de 5 meses: o bebê pode aparecer DEITADO, ENCOSTADO ou SENTADO, desde que a pose seja natural e plausível para a idade informada.`
+    : `- REGRA DE IDADE: adapte tamanho corporal, estatura, proporções, roupa e postura para uma criança de ${ageText}. A pose deve ser natural e compatível com essa idade, sem fazê-la parecer mais nova ou mais velha.`;
 
-REGRAS OBRIGATÓRIAS:
-- Preserve 100% o rosto do bebê, mantendo com máxima fidelidade a identidade facial, traços, expressão, tom de pele, cabelo e aparência natural.
-- Gere uma foto ultrarrealista, delicada, natural e com acabamento premium, sem aparência artificial de IA.
-- Composição vertical EXATAMENTE em proporção 4:5.
-- ${styleBlock}
-- REGRA DE IDADE E DESENVOLVIMENTO: adapte corpo, tamanho, estatura, proporções e postura para parecerem naturalmente compatíveis com ${months} ${months === 1 ? 'mês' : 'meses'}, sem envelhecer artificialmente o bebê e sem fazê-lo parecer uma criança maior.
-- Para 1 ou 2 meses: o bebê deve aparecer SEMPRE DEITADO, com corpo pequeno e delicado e pose natural para essa fase. Nunca sentado ou sustentando sozinho uma postura incompatível com a idade.
-- Para 3 ou 4 meses: o bebê pode aparecer DEITADO ou ENCOSTADINHO/COM APOIO, sempre de forma natural e compatível com a idade. Não o mostre sentado sozinho.
-- A partir de 5 meses: o bebê pode aparecer DEITADO, ENCOSTADO ou SENTADO, desde que a pose seja natural e plausível para a idade informada.
-- Se uma preferência da cliente, tema ou cenário pedir uma pose incompatível com a idade, esta REGRA DE IDADE tem prioridade.
-- O nome do bebê é "${name}" e está fazendo ${months} ${months === 1 ? 'mês' : 'meses'}.
-- Se houver QUALQUER texto visível na imagem (nome, idade, placa, letreiro, bolo ou decoração), escreva SOMENTE em PORTUGUÊS DO BRASIL. Nunca gere palavras em inglês. Use exatamente o nome "${name}" e, quando a idade aparecer, use "${months} ${months === 1 ? 'mês' : 'meses'}".
-- Não adicione marca-d'água; ela será aplicada pelo sistema depois.
-- Não mostre equipamentos de estúdio.
-${additions.join('\n')}`;
+  return `EDITE a fotografia enviada e transforme-a em um ensaio fotográfico profissional de ${eventLabel}. ${base}\n\nREGRAS OBRIGATÓRIAS:\n- Preserve 100% o rosto do(a) ${subjectLabel}, mantendo com máxima fidelidade a identidade facial, traços, expressão, tom de pele, cabelo e aparência natural.\n- Gere uma foto ultrarrealista, natural, delicada e com acabamento premium, sem aparência artificial de IA.\n- Composição vertical EXATAMENTE em proporção 4:5.\n${styleBlock}\n${ageRules}\n- Se uma preferência da cliente, tema ou cenário pedir uma pose incompatível com a idade, a REGRA DE IDADE tem prioridade.\n- O nome é "${name}" e a idade informada é ${ageText}.\n- Se houver QUALQUER texto visível na imagem (nome, idade, placa, letreiro, bolo ou decoração), escreva SOMENTE em PORTUGUÊS DO BRASIL. Nunca gere palavras em inglês. Use exatamente o nome "${name}" e, quando a idade aparecer, use "${ageText}".\n- Não adicione marca-d'água; ela será aplicada pelo sistema depois.\n- Não mostre equipamentos de estúdio.\n${additions.join('\n')}`;
 }
 
 async function callOpenAIEdit(file, prompt) {

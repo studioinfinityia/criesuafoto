@@ -82,8 +82,16 @@
     <section id="personalizar" class="flow-section order-section locked-section">
       <div class="step-title"><i>3</i><div><span>PERSONALIZE A FOTO</span><h2>Conte os detalhes do bebê.</h2></div></div>
       <div class="personalization-grid">
-        <label><span>Nome do bebê</span><input id="babyName" type="text" maxlength="40" placeholder="Ex.: Maria Antonella" autocomplete="off"></label>
-        <label><span>Quantos meses está fazendo?</span><input id="babyMonths" type="number" min="1" max="36" inputmode="numeric" placeholder="Ex.: 3"></label>
+        <div class="personalization-wide occasion-field">
+          <span class="occasion-label">O ensaio é de:</span>
+          <div class="occasion-toggle" role="group" aria-label="Tipo de comemoração">
+            <button type="button" class="occasion-option active" data-occasion="mesversario" aria-pressed="true">Mesversário</button>
+            <button type="button" class="occasion-option" data-occasion="aniversario" aria-pressed="false">Aniversário</button>
+          </div>
+          <small class="occasion-help">Mesversário: de 1 a 11 meses. Depois disso, selecione Aniversário e informe a idade em anos.</small>
+        </div>
+        <label><span>Nome do bebê/criança</span><input id="babyName" type="text" maxlength="40" placeholder="Ex.: Maria Antonella" autocomplete="off"></label>
+        <label><span id="ageLabel">Quantos meses está fazendo?</span><input id="babyMonths" type="number" min="1" max="11" inputmode="numeric" placeholder="Ex.: 3"></label>
         <label class="personalization-wide"><span>Observação de personalização <small>(opcional)</small></span><textarea id="photoNotes" maxlength="500" rows="4" placeholder="Ex.: vestido rosa claro, sem bolo, flores brancas, bebê deitadinha..."></textarea></label>
         <label class="minimalist-choice personalization-wide" for="minimalist">
           <input type="checkbox" id="minimalist">
