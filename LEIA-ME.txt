@@ -1,16 +1,29 @@
-ATUALIZAÇÃO - MAIS TEMAS DE MENINAS
+ATUALIZAÇÃO – NOVOS TEMAS
 
-Substitua:
+Temas incluídos nesta atualização:
+
+MENINO
+1. Flamengo
+2. Jesus
+3. Ursinho Pooh
+
+MENINA
+4. Nossa Senhora dos Milagres
+
+Arquivos principais para substituir no GitHub:
 - server.js
 - script.js
 
-Adicione as 10 imagens .jpeg deste pacote na mesma pasta dos demais arquivos do site.
+Novas imagens adicionadas:
+- flamengo-menino-antes.jpeg
+- flamengo-menino-depois.jpeg
+- jesus-menino-antes.jpeg
+- jesus-menino-depois.jpeg
+- nossa-senhora-dos-milagres-antes.jpeg
+- nossa-senhora-dos-milagres-depois.jpeg
+- ursinho-pooh-antes.jpeg
+- ursinho-pooh-depois.jpeg
 
-Novos temas:
-- Masha e o Urso
-- Chapeuzinho Vermelho
-- Moana
-- Barbie
-- Vasco
-
-Esta versão já mantém todos os temas de menina e menino adicionados anteriormente, modo de teste do iPhone, seletor Minimalista e regras de preservação/realismo.
+Observação:
+- Esta atualização já foi montada sobre a versão mais recente do projeto.
+- Os prompts mantêm a lógica de preservar 100% o rosto/identidade da criança, com resultado realista e natural.
