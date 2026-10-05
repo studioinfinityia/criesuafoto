@@ -1,4 +1,4 @@
-ATUALIZACAO - NOVOS TEMAS DE MENINAS
+ATUALIZAÇÃO - MAIS TEMAS DE MENINAS
 
 Substitua:
 - server.js
@@ -7,13 +7,10 @@ Substitua:
 Adicione as 10 imagens .jpeg deste pacote na mesma pasta dos demais arquivos do site.
 
 Novos temas:
-- Branca de Neve
-- Galinha Pintadinha
-- Sítio do Picapau Amarelo
-- Ovelhinha
-- Monstros S.A.
+- Masha e o Urso
+- Chapeuzinho Vermelho
+- Moana
+- Barbie
+- Vasco
 
-Esta atualização já foi montada em cima da versão que também inclui:
-- modo de teste do iPhone
-- ajuste do seletor Minimalista
-- novos temas de meninos adicionados anteriormente
+Esta versão já mantém todos os temas de menina e menino adicionados anteriormente, modo de teste do iPhone, seletor Minimalista e regras de preservação/realismo.
