@@ -141,19 +141,43 @@ async function createWatermarkedPreview(imageBuffer) {
 function buildPrompt(body) {
   const base = THEME_PROMPTS[body.theme];
   if (!base) throw new Error('Tema não disponível para geração automática.');
+
   const name = String(body.babyName || '').trim().slice(0, 40);
   const months = Math.max(1, Math.min(36, Number(body.babyMonths || 0)));
   const notes = String(body.photoNotes || '').trim().slice(0, 500);
+  const minimalist = String(body.minimalist || '').toLowerCase() === 'true';
+
   const additions = [];
-  if (body.cake === '1') additions.push(`Inclua um bolo temático bonito e elegante, integrado naturalmente ao cenário e coerente com o tema escolhido. O bolo deve trazer de forma legível o nome "${name}" e a idade "${months} ${months === 1 ? 'mês' : 'meses'}", ou somente a idade quando isso resultar em composição visual mais natural. Todo texto deve estar em português do Brasil.`);
+  if (body.cake === '1') {
+    additions.push(`Inclua um bolo temático bonito, delicado e bem integrado ao cenário, coerente com o tema escolhido. O bolo deve trazer de forma legível o nome "${name}" e a idade "${months} ${months === 1 ? 'mês' : 'meses'}", ou somente a idade quando isso resultar em composição visual mais natural. Todo texto deve estar em português do Brasil.`);
+  }
+
   const people = Math.max(0, Math.min(3, Number(body.extraPeople || 0)));
-  if (people) additions.push(`A composição pode incluir até ${people} pessoa(s) adicional(is), mas nunca invente a identidade de uma pessoa real sem foto de referência.`);
-  if (notes) additions.push(`Preferências específicas da cliente: ${notes}. Siga-as quando forem compatíveis com uma fotografia natural e segura.`);
-  return `EDITE a fotografia enviada e transforme-a em um ensaio fotográfico profissional. ${base}
+  if (people) {
+    additions.push(`A composição pode incluir até ${people} pessoa(s) adicional(is), mas nunca invente a identidade de uma pessoa real sem foto de referência.`);
+  }
+
+  if (notes) {
+    additions.push(`Preferências específicas da cliente: ${notes}. Siga-as quando forem compatíveis com uma fotografia natural e segura.`);
+  }
+
+  const styleBlock = minimalist
+    ? `- ESTILO SELECIONADO: MINIMALISTA.
+- Gere uma foto realmente mais minimalista, com cenário mais limpo, menos elementos decorativos, composição mais leve, organizada e elegante.
+- Reduza a quantidade de objetos e enfeites. Evite cenário poluído, carregado ou excessivamente decorado.
+- Mantenha maior destaque no bebê, principalmente no rosto, com o tema aparecendo de forma delicada e sutil.
+- O resultado deve lembrar ensaios minimalistas de mesversário: fundo macio e limpo, poucos elementos temáticos, visual delicado, natural e premium.`
+    : `- ESTILO SELECIONADO: TEMÁTICO TRADICIONAL.
+- Gere uma composição temática bonita, harmoniosa e realista, com elementos decorativos compatíveis com o tema.
+- O cenário pode ter mais elementos do que a versão minimalista, mas sem exagero e sempre mantendo o bebê como foco principal.`;
+
+  return `EDITE a fotografia enviada e transforme-a em um ensaio fotográfico profissional de mesversário. ${base}
+
 REGRAS OBRIGATÓRIAS:
-- Estética padrão Studio Infinity IA: MINIMALISTA, elegante, natural, ultrarrealista, poucos elementos, cenário limpo e acabamento premium.
+- Preserve 100% o rosto do bebê, mantendo com máxima fidelidade a identidade facial, traços, expressão, tom de pele, cabelo e aparência natural.
+- Gere uma foto ultrarrealista, delicada, natural e com acabamento premium, sem aparência artificial de IA.
 - Composição vertical EXATAMENTE em proporção 4:5.
-- Preserve com máxima fidelidade a identidade, o rosto, os traços faciais, tom de pele, cabelo e expressão da pessoa da foto de referência. Anatomia realista e textura natural de pele; sem aparência artificial de IA.
+${styleBlock}
 - REGRA DE IDADE E DESENVOLVIMENTO: adapte corpo, tamanho, estatura, proporções e postura para parecerem naturalmente compatíveis com ${months} ${months === 1 ? 'mês' : 'meses'}, sem envelhecer artificialmente o bebê e sem fazê-lo parecer uma criança maior.
 - Para 1 ou 2 meses: o bebê deve aparecer SEMPRE DEITADO, com corpo pequeno e delicado e pose natural para essa fase. Nunca sentado ou sustentando sozinho uma postura incompatível com a idade.
 - Para 3 ou 4 meses: o bebê pode aparecer DEITADO ou ENCOSTADINHO/COM APOIO, sempre de forma natural e compatível com a idade. Não o mostre sentado sozinho.
@@ -203,17 +227,6 @@ app.get('/api/health', async (_req, res) => {
   } catch { return res.status(503).json(result); }
 });
 
-
-function isAuthorizedTestDevice(req) {
-  const configuredSecret = String(process.env.TEST_DEVICE_SECRET || '').trim();
-  const suppliedSecret = String(req.body.testDeviceSecret || '').trim();
-  if (!configuredSecret || !suppliedSecret) return false;
-
-  const a = crypto.createHash('sha256').update(suppliedSecret).digest();
-  const b = crypto.createHash('sha256').update(configuredSecret).digest();
-  return crypto.timingSafeEqual(a, b);
-}
-
 app.post('/api/generate', upload.single('image'), async (req, res) => {
   let orderId = null;
   try {
@@ -228,7 +241,6 @@ app.post('/api/generate', upload.single('image'), async (req, res) => {
     if (deviceId.length < 12) return res.status(400).json({ error: 'Atualize a página e tente novamente.' });
     const fingerprint = clientFingerprint(req, deviceId);
     const markerPath = `preview-limits/${fingerprint}.json`;
-    const testDevice = isAuthorizedTestDevice(req);
 
     // Compra de R$ 25+ libera a próxima geração incluída no pedido.
     // O direito é validado no servidor e não depende do navegador.
@@ -263,7 +275,7 @@ app.post('/api/generate', upload.single('image'), async (req, res) => {
       }
     }
 
-    const existing = testDevice ? null : await storageGet(markerPath);
+    const existing = await storageGet(markerPath);
     if (existing) return res.status(429).json({ error: 'A prévia gratuita deste dispositivo já foi utilizada. Após uma compra de R$ 25 ou mais, uma nova geração é liberada automaticamente.' });
 
     const requestedOrderId = String(req.body.orderId || '');
@@ -307,12 +319,10 @@ app.post('/api/generate', upload.single('image'), async (req, res) => {
     order.generated_at = new Date().toISOString();
     if (generated.usage) order.openai_usage = generated.usage;
     await saveOrder(order);
-    if (!testDevice) {
-      await storageUpload(markerPath, Buffer.from(JSON.stringify({ order_id: orderId, created_at: order.created_at })), 'application/json', true);
-    }
+    await storageUpload(markerPath, Buffer.from(JSON.stringify({ order_id: orderId, created_at: order.created_at })), 'application/json', true);
 
     const previewUrl = await signedUrl(previewPath, 60 * 60);
-    return res.json({ orderId, previewUrl, testDevice });
+    return res.json({ orderId, previewUrl });
   } catch (e) {
     console.error('generate error', e);
     let message = 'Não foi possível criar sua prévia agora. Tente novamente em alguns instantes.';
