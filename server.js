@@ -52,7 +52,12 @@ const THEME_PROMPTS = {
   cerejinha: 'Create a cherry-themed baby milestone studio portrait with red, white and soft green palette, plush cherry props, gingham details and an elegant cozy setup. Preserve the baby identity, face, facial features, skin tone, hair, expression and proportions exactly. Photorealistic, natural newborn photography.',
   'pequena-sereia': 'Create a whimsical under-the-sea inspired baby milestone portrait with shells, pearls, soft aqua, lilac and coral tones and original mermaid-inspired decor. Do not reproduce copyrighted characters. Preserve the baby identity, face, facial features, skin tone, hair, expression and proportions exactly. Photorealistic.',
   bezerrinha: 'Create a cute pink baby calf/farm themed milestone studio photo with pink, white, black and soft cow-print accents, tasteful plush farm props and premium newborn styling. Preserve the baby identity, face, facial features, skin tone, hair, expression and proportions exactly. Photorealistic and natural.',
-  frozen: 'Create a magical winter-princess inspired baby milestone portrait in icy blue, white and silver with snowflakes and elegant frozen scenery, without reproducing copyrighted characters or logos. Preserve the baby identity, face, facial features, skin tone, hair, expression and proportions exactly. Photorealistic premium studio photography.'
+  frozen: 'Create a magical winter-princess inspired baby milestone portrait in icy blue, white and silver with snowflakes and elegant frozen scenery, without reproducing copyrighted characters or logos. Preserve the baby identity, face, facial features, skin tone, hair, expression and proportions exactly. Photorealistic premium studio photography.',
+  fazendinha: 'Create a premium farm-themed baby milestone portrait with warm beige, brown, olive green and rustic red accents, tasteful plush farm animals, subtle barn and fence details, and natural textures. Preserve 100% of the baby face, identity, expression, skin tone and hair. Photorealistic, natural proportions and realistic baby photography.',
+  chaves: 'Create a playful neighborhood-comedy inspired baby milestone portrait with warm beige, green, red and orange accents, a small barrel prop and simple nostalgic courtyard-inspired details. Keep the composition child-friendly and tasteful. Preserve 100% of the baby face, identity, expression, skin tone and hair. Photorealistic and natural.',
+  '3-palavrinhas': 'Create a cheerful children-music inspired baby milestone portrait with a clean colorful setup, playful musical notes, soft primary colors and a few friendly toy-like props. Preserve 100% of the baby face, identity, expression, skin tone and hair. Photorealistic, natural and premium baby photography.',
+  eleicao: 'Create a playful Brazilian election-themed baby milestone portrait using green, yellow, blue and white, with tasteful campaign-style props such as a small sign, sash, ballot-box-inspired prop and personalized name and age details. Keep it humorous, family-friendly and nonpartisan. Preserve 100% of the baby face, identity, expression, skin tone and hair. Photorealistic and natural.',
+  sonic: 'Create a high-energy blue speed-adventure inspired child birthday portrait with blue, yellow and green accents, ring motifs, dynamic game-inspired scenery and a premium birthday setup. Preserve 100% of the child face, identity, expression, skin tone and hair. Photorealistic, natural proportions and realistic photography.'
 };
 
 function envReady() {
@@ -153,21 +158,16 @@ function buildPrompt(body) {
   }
 
   const people = Math.max(0, Math.min(3, Number(body.extraPeople || 0)));
-  if (people) {
-    additions.push(`A composição pode incluir até ${people} pessoa(s) adicional(is), mas nunca invente a identidade de uma pessoa real sem foto de referência.`);
-  }
-
-  if (notes) {
-    additions.push(`Preferências específicas da cliente: ${notes}. Siga-as quando forem compatíveis com uma fotografia natural e segura.`);
-  }
+  if (people) additions.push(`A composição pode incluir até ${people} pessoa(s) adicional(is), mas nunca invente a identidade de uma pessoa real sem foto de referência.`);
+  if (notes) additions.push(`Preferências específicas da cliente: ${notes}. Siga-as quando forem compatíveis com uma fotografia natural e segura.`);
 
   const styleBlock = minimalist
-    ? `- ESTILO SELECIONADO: MINIMALISTA.
+    ? `ESTILO SELECIONADO: MINIMALISTA.
 - Gere uma foto realmente mais minimalista, com cenário mais limpo, menos elementos decorativos, composição mais leve, organizada e elegante.
 - Reduza a quantidade de objetos e enfeites. Evite cenário poluído, carregado ou excessivamente decorado.
 - Mantenha maior destaque no bebê, principalmente no rosto, com o tema aparecendo de forma delicada e sutil.
 - O resultado deve lembrar ensaios minimalistas de mesversário: fundo macio e limpo, poucos elementos temáticos, visual delicado, natural e premium.`
-    : `- ESTILO SELECIONADO: TEMÁTICO TRADICIONAL.
+    : `ESTILO SELECIONADO: TEMÁTICO TRADICIONAL.
 - Gere uma composição temática bonita, harmoniosa e realista, com elementos decorativos compatíveis com o tema.
 - O cenário pode ter mais elementos do que a versão minimalista, mas sem exagero e sempre mantendo o bebê como foco principal.`;
 
@@ -177,7 +177,7 @@ REGRAS OBRIGATÓRIAS:
 - Preserve 100% o rosto do bebê, mantendo com máxima fidelidade a identidade facial, traços, expressão, tom de pele, cabelo e aparência natural.
 - Gere uma foto ultrarrealista, delicada, natural e com acabamento premium, sem aparência artificial de IA.
 - Composição vertical EXATAMENTE em proporção 4:5.
-${styleBlock}
+- ${styleBlock}
 - REGRA DE IDADE E DESENVOLVIMENTO: adapte corpo, tamanho, estatura, proporções e postura para parecerem naturalmente compatíveis com ${months} ${months === 1 ? 'mês' : 'meses'}, sem envelhecer artificialmente o bebê e sem fazê-lo parecer uma criança maior.
 - Para 1 ou 2 meses: o bebê deve aparecer SEMPRE DEITADO, com corpo pequeno e delicado e pose natural para essa fase. Nunca sentado ou sustentando sozinho uma postura incompatível com a idade.
 - Para 3 ou 4 meses: o bebê pode aparecer DEITADO ou ENCOSTADINHO/COM APOIO, sempre de forma natural e compatível com a idade. Não o mostre sentado sozinho.
@@ -227,6 +227,17 @@ app.get('/api/health', async (_req, res) => {
   } catch { return res.status(503).json(result); }
 });
 
+
+function isAuthorizedTestDevice(req) {
+  const configuredSecret = String(process.env.TEST_DEVICE_SECRET || '').trim();
+  const suppliedSecret = String(req.body.testDeviceSecret || '').trim();
+  if (!configuredSecret || !suppliedSecret) return false;
+
+  const a = crypto.createHash('sha256').update(suppliedSecret).digest();
+  const b = crypto.createHash('sha256').update(configuredSecret).digest();
+  return crypto.timingSafeEqual(a, b);
+}
+
 app.post('/api/generate', upload.single('image'), async (req, res) => {
   let orderId = null;
   try {
@@ -241,6 +252,7 @@ app.post('/api/generate', upload.single('image'), async (req, res) => {
     if (deviceId.length < 12) return res.status(400).json({ error: 'Atualize a página e tente novamente.' });
     const fingerprint = clientFingerprint(req, deviceId);
     const markerPath = `preview-limits/${fingerprint}.json`;
+    const testDevice = isAuthorizedTestDevice(req);
 
     // Compra de R$ 25+ libera a próxima geração incluída no pedido.
     // O direito é validado no servidor e não depende do navegador.
@@ -275,7 +287,7 @@ app.post('/api/generate', upload.single('image'), async (req, res) => {
       }
     }
 
-    const existing = await storageGet(markerPath);
+    const existing = testDevice ? null : await storageGet(markerPath);
     if (existing) return res.status(429).json({ error: 'A prévia gratuita deste dispositivo já foi utilizada. Após uma compra de R$ 25 ou mais, uma nova geração é liberada automaticamente.' });
 
     const requestedOrderId = String(req.body.orderId || '');
@@ -319,10 +331,12 @@ app.post('/api/generate', upload.single('image'), async (req, res) => {
     order.generated_at = new Date().toISOString();
     if (generated.usage) order.openai_usage = generated.usage;
     await saveOrder(order);
-    await storageUpload(markerPath, Buffer.from(JSON.stringify({ order_id: orderId, created_at: order.created_at })), 'application/json', true);
+    if (!testDevice) {
+      await storageUpload(markerPath, Buffer.from(JSON.stringify({ order_id: orderId, created_at: order.created_at })), 'application/json', true);
+    }
 
     const previewUrl = await signedUrl(previewPath, 60 * 60);
-    return res.json({ orderId, previewUrl });
+    return res.json({ orderId, previewUrl, testDevice });
   } catch (e) {
     console.error('generate error', e);
     let message = 'Não foi possível criar sua prévia agora. Tente novamente em alguns instantes.';

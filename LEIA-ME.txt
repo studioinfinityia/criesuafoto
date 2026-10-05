@@ -1,16 +1,16 @@
-STUDIO INFINITY IA — ATUALIZAÇÃO
+ATUALIZACAO - NOVOS TEMAS DE MENINOS
 
-Substitua no projeto:
-1. server.js -> substitua o server.js atual.
-2. style.css -> substitua o style.css atual.
-3. watermark-preview.png -> adicione na MESMA pasta do server.js.
+Substitua:
+- server.js
+- script.js
 
-O pacote inclui:
-- nova marca-d'água usando a arte PNG fornecida;
-- marca incorporada diretamente nos pixels da prévia;
-- regras de pose/tamanho conforme a idade do bebê;
-- melhoria da instrução do bolo temático;
-- correção da centralização do texto acima das provas sociais;
-- preservação dos ajustes CSS anteriores.
+Adicione as 10 imagens .jpeg deste pacote na mesma pasta dos demais arquivos do site.
 
-Depois faça commit/push e redeploy do backend na Vercel se necessário.
+Novos temas:
+- Fazendinha
+- Chaves
+- 3 Palavrinhas
+- Eleicao
+- Sonic
+
+Tambem foi preservado o modo de teste do iPhone e corrigido o seletor Minimalista para realmente enviar a escolha ao servidor.
