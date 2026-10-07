@@ -218,12 +218,104 @@
 .hero-proof-badge span{font-size:11px!important;white-space:nowrap!important}
 
 
-/* Mesversário / Aniversário */
-.occasion-field{display:flex;flex-direction:column;gap:10px}
-.occasion-label{font-weight:800;color:#fff;font-size:.95rem}
-.occasion-toggle{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:520px}
-.occasion-option{appearance:none;border:1px solid rgba(91,211,255,.28);background:rgba(255,255,255,.035);color:#cbd5ff;border-radius:14px;padding:13px 16px;font:inherit;font-weight:800;cursor:pointer;transition:.2s ease}
-.occasion-option:hover{border-color:rgba(91,211,255,.55);transform:translateY(-1px)}
-.occasion-option.active{color:#fff;border-color:#16d7ff;background:linear-gradient(135deg,rgba(22,215,255,.18),rgba(223,38,218,.18));box-shadow:0 0 0 1px rgba(22,215,255,.12),0 8px 28px rgba(72,55,255,.12)}
-.occasion-help{display:block;color:#8f9abc;line-height:1.45;font-size:.82rem}
-@media(max-width:620px){.occasion-toggle{grid-template-columns:1fr 1fr;width:100%}.occasion-option{padding:12px 10px;font-size:.9rem}}
+/* Ajuste mobile 07/10: cards de temas + topo */
+.instagram-icon{display:none;width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+.theme-card{
+  display:grid;
+  grid-template-rows:auto 1fr auto;
+  min-width:0;
+}
+.theme-card p{
+  margin:14px 0 12px;
+}
+.theme-card strong{
+  display:block;
+  margin-top:auto;
+}
+
+@media(max-width:680px){
+  .topbar{
+    gap:8px;
+    padding:0 10px!important;
+  }
+  .brand{
+    gap:7px;
+    min-width:0;
+    flex:1 1 auto;
+  }
+  .brand span{
+    display:block!important;
+    font-size:9px;
+    letter-spacing:.045em;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .topbar .brand img{
+    width:34px!important;
+    height:34px!important;
+    max-width:34px!important;
+    flex:0 0 34px;
+  }
+  .top-actions{
+    gap:7px;
+    flex:0 0 auto;
+  }
+  .top-actions>a:first-child{
+    display:grid!important;
+  }
+  .instagram-link{
+    width:36px;
+    height:36px;
+    place-items:center;
+    border:1px solid rgba(24,217,255,.35);
+    border-radius:50%;
+    color:#fff;
+  }
+  .instagram-text{display:none!important}
+  .instagram-icon{display:block}
+  .top-actions .wa{
+    padding:8px 11px;
+    font-size:11px;
+    white-space:nowrap;
+  }
+
+  .theme-grid{
+    align-items:stretch;
+    grid-auto-rows:1fr;
+    gap:10px!important;
+  }
+  .theme-card{
+    height:100%;
+    border-radius:18px;
+    padding-bottom:13px;
+  }
+  .theme-cover{
+    height:132px!important;
+    min-height:132px!important;
+    background-position:center 28%!important;
+    padding:11px 12px!important;
+  }
+  .theme-cover span{
+    font-size:8px!important;
+    line-height:1.1;
+  }
+  .theme-cover b{
+    font-size:18px!important;
+    line-height:1.04;
+    overflow-wrap:anywhere;
+  }
+  .theme-card p{
+    min-height:0!important;
+    margin:12px 0 10px!important;
+    padding:0 12px!important;
+    font-size:11.5px!important;
+    line-height:1.42!important;
+  }
+  .theme-card strong{
+    padding:0 12px!important;
+    font-size:10.5px!important;
+    line-height:1.2;
+  }
+}
