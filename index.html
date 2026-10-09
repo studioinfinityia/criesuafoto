@@ -20,8 +20,85 @@
   fbq('track','PageView');
   </script>
   <!-- End Meta Pixel -->
-  <link rel="stylesheet" href="style.css?v=20261007-mobile-1">
+  <link rel="stylesheet" href="style.css?v=20261009-occasion-1">
   <style>html,body{width:100%;max-width:100%;overflow-x:hidden}.topbar .brand img{width:38px!important;height:38px!important;max-width:38px!important;object-fit:cover}.topbar{min-height:66px}.app-shell{display:block;width:min(100%,980px);margin:0 auto}.hero{display:block;text-align:center}.social-proof img{max-width:100%;height:auto}.proof-slide img{width:100%!important;aspect-ratio:706/1536;object-fit:cover}footer img{width:42px!important;height:42px!important;max-width:42px!important}</style>
+
+<style id="occasion-toggle-fix">
+/* Seletor Mesversário / Aniversário */
+.occasion-field{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  padding:16px 18px;
+  border:1px solid rgba(105,122,180,.22);
+  border-radius:16px;
+  background:linear-gradient(135deg,rgba(18,25,55,.82),rgba(9,13,34,.9));
+}
+.occasion-label{
+  color:#fff;
+  font-size:14px;
+  font-weight:800;
+}
+.occasion-toggle{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  width:min(100%,430px);
+}
+.occasion-option{
+  appearance:none;
+  -webkit-appearance:none;
+  border:1px solid rgba(127,143,205,.28);
+  border-radius:12px;
+  min-height:46px;
+  padding:11px 16px;
+  background:#0d1330;
+  color:#dbe2ff;
+  font:inherit;
+  font-size:14px;
+  font-weight:800;
+  cursor:pointer;
+  transition:.18s ease;
+  box-shadow:none;
+}
+.occasion-option:hover{
+  border-color:rgba(0,226,255,.55);
+  transform:translateY(-1px);
+}
+.occasion-option.active,
+.occasion-option[aria-pressed="true"]{
+  color:#fff;
+  border-color:transparent;
+  background:linear-gradient(100deg,#168bff 0%,#7d49ff 52%,#e52bd3 100%);
+  box-shadow:0 0 20px rgba(79,94,255,.28);
+}
+.occasion-help{
+  display:block;
+  color:#9da9d4;
+  font-size:11.5px;
+  line-height:1.45;
+  max-width:640px;
+}
+@media(max-width:680px){
+  .occasion-field{
+    padding:14px;
+    border-radius:14px;
+  }
+  .occasion-toggle{
+    width:100%;
+    gap:7px;
+  }
+  .occasion-option{
+    min-height:44px;
+    padding:10px 8px;
+    font-size:13px;
+  }
+  .occasion-help{
+    font-size:10.5px;
+  }
+}
+</style>
+
 </head>
 <body>
   <div class="impact-ticker" aria-label="Destaques Studio Infinity IA">
@@ -177,5 +254,5 @@
 
   <a class="floating-wa" data-whatsapp target="_blank" rel="noopener" aria-label="WhatsApp">WhatsApp</a>
   <footer><img src="logo.jpeg" alt=""><div><b>Studio Infinity IA</b><small>Ensaios personalizados com inteligência artificial.</small></div><a data-instagram target="_blank" rel="noopener">@studioinfinityia</a></footer>
-  <script src="config.js?v=20261004-1"></script><script src="script.js?v=20261004-3"></script>
+  <script src="config.js?v=20261004-1"></script><script src="script.js?v=20261009-occasion-1"></script>
 </body></html>
