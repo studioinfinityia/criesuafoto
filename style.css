@@ -1404,3 +1404,71 @@ body.theme-modal-open{
   }
 }
 
+
+/* ==========================================================
+   CORREÇÃO TOPO DO POPUP — SEM BARRA SÓLIDA
+   ========================================================== */
+.theme-modal-top{
+  position:relative!important;
+  top:auto!important;
+  z-index:5!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:12px!important;
+  margin:0 0 12px!important;
+  padding:0!important;
+  background:transparent!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+
+.theme-back,
+.theme-close-x{
+  border:1px solid rgba(95,119,196,.28)!important;
+  background:
+    linear-gradient(135deg,rgba(22,31,68,.92),rgba(14,20,48,.92))!important;
+  color:#fff!important;
+  box-shadow:0 8px 24px rgba(0,0,0,.12)!important;
+}
+
+.theme-back{
+  min-height:38px!important;
+  padding:0 14px!important;
+  border-radius:999px!important;
+  font-size:12px!important;
+}
+
+.theme-close-x{
+  width:38px!important;
+  height:38px!important;
+  border-radius:50%!important;
+  display:grid!important;
+  place-items:center!important;
+  font-size:22px!important;
+  line-height:1!important;
+}
+
+.theme-back:hover,
+.theme-close-x:hover{
+  border-color:rgba(24,217,255,.48)!important;
+  background:
+    linear-gradient(135deg,rgba(28,40,84,.96),rgba(18,26,58,.96))!important;
+}
+
+@media(max-width:680px){
+  .theme-modal-top{
+    margin-bottom:10px!important;
+  }
+  .theme-back{
+    min-height:36px!important;
+    padding:0 12px!important;
+    font-size:11px!important;
+  }
+  .theme-close-x{
+    width:36px!important;
+    height:36px!important;
+    font-size:21px!important;
+  }
+}
+
