@@ -17,10 +17,13 @@
   t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script',
   'https://connect.facebook.net/en_US/fbevents.js');
   fbq('init','1077184481977337');
-  fbq('track','PageView');
+  if(!window.__studioPageViewSent){
+    window.__studioPageViewSent=true;
+    fbq('track','PageView');
+  }
   </script>
   <!-- End Meta Pixel -->
-  <link rel="stylesheet" href="style.css?v=20261009-occasion-1">
+  <link rel="stylesheet" href="style.css?v=20261013-funil-1">
   <style>html,body{width:100%;max-width:100%;overflow-x:hidden}.topbar .brand img{width:38px!important;height:38px!important;max-width:38px!important;object-fit:cover}.topbar{min-height:66px}.app-shell{display:block;width:min(100%,980px);margin:0 auto}.hero{display:block;text-align:center}.social-proof img{max-width:100%;height:auto}.proof-slide img{width:100%!important;aspect-ratio:706/1536;object-fit:cover}footer img{width:42px!important;height:42px!important;max-width:42px!important}</style>
 
 <style id="occasion-toggle-fix">
@@ -101,6 +104,8 @@
 
 </head>
 <body>
+  <noscript><img height="1" width="1" style="display:none" alt=""
+    src="https://www.facebook.com/tr?id=1077184481977337&ev=PageView&noscript=1"></noscript>
   <div class="impact-ticker" aria-label="Destaques Studio Infinity IA">
     <div class="impact-ticker-track">
       <span>+1000 CLIENTES ATENDIDOS</span><i>•</i><span>TRANSFORMAMOS SUAS FOTOS AINDA HOJE</span><i>•</i><span>PARE DE GASTAR RIOS DE DINHEIRO COM ENSAIOS FOTOGRÁFICOS</span><i>•</i><span>FOTOS ULTRARREALISTAS EM ALTA QUALIDADE SEM SAIR DE CASA</span><i>•</i>
@@ -143,6 +148,45 @@
         </div>
       </div>
       <a class="inline-link" data-instagram target="_blank" rel="noopener">Ver mais resultados no Instagram →</a>
+    </section>
+
+    <section id="como-funciona" class="flow-section how-it-works" aria-labelledby="comoFuncionaTitulo">
+      <div class="how-head">
+        <span class="eyebrow">SIMPLES, RÁPIDO E SEM PAGAMENTO ANTECIPADO</span>
+        <h2 id="comoFuncionaTitulo">Transforme a foto do seu bebê em um ensaio incrível!</h2>
+        <p>Escolha seu tema favorito, envie uma foto do seu bebê e veja como ficará o ensaio antes de pagar!</p>
+        <strong class="pay-only-if-like">Você só paga se gostar do resultado!</strong>
+      </div>
+
+      <div class="how-steps">
+        <article class="how-step">
+          <span class="how-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M4 6h16M6 3v6M18 3v6M5 13h6v6H5zM14 13h5v6h-5z"/></svg>
+          </span>
+          <div><b>1. Escolha seu tema</b><small>Selecione o cenário que mais combina com seu bebê.</small></div>
+        </article>
+        <article class="how-step">
+          <span class="how-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h3M11 17h9M14 4v6M8 14v6"/></svg>
+          </span>
+          <div><b>2. Personalize seu ensaio</b><small>Escolha o pacote e os adicionais que desejar.</small></div>
+        </article>
+        <article class="how-step">
+          <span class="how-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M4 5h16v14H4zM8 9h.01M4 16l5-4 4 3 3-2 4 3"/></svg>
+          </span>
+          <div><b>3. Envie a foto e veja a prévia</b><small>Veja o resultado antes de decidir se quer comprar.</small></div>
+        </article>
+      </div>
+
+      <div class="price-highlight">
+        <small>FOTOS A PARTIR DE</small>
+        <div><strong>R$ 12,50</strong><span>cada</span></div>
+        <p>Valor por foto no pacote com 2 fotos por R$ 25,00.</p>
+      </div>
+
+      <p class="no-upfront"><b>Sem pagamento antecipado.</b> Você escolhe, visualiza a prévia e só paga se gostar!</p>
+      <a class="primary how-cta" id="startFunnel" href="#pedido">QUERO CRIAR MEU ENSAIO</a>
     </section>
 
     <section id="pedido" class="flow-section order-section">
@@ -193,17 +237,28 @@
     <section id="precos" class="flow-section order-section locked-section">
       <div class="step-title"><i>4</i><div><span>ESCOLHA SEU PACOTE</span><h2>Quantas fotos você quer?</h2></div></div>
       <div class="price-step" id="priceStep">
+        <div class="package-intro">
+          <h3>Escolha seu pacote antes de gerar a prévia</h3>
+          <p>Você já vê todos os valores agora e decide o que quer incluir no ensaio.</p>
+        </div>
         <div class="package-grid" id="packageGrid">
           <button class="package selected" data-package="1" data-price="20"><small>PARA EXPERIMENTAR</small><strong>1 foto</strong><em>R$ 20</em></button>
-          <button class="package featured" data-package="2" data-price="25"><small>MELHOR CUSTO-BENEFÍCIO</small><strong>2 fotos</strong><em>R$ 25</em></button>
+          <button class="package featured" data-package="2" data-price="25"><small>MELHOR CUSTO-BENEFÍCIO</small><strong>2 fotos</strong><em>R$ 25</em><span class="unit-price">R$ 12,50 por foto</span></button>
         </div>
         <div class="preview-rule"><b>1 PRÉVIA GRATUITA ANTES DO PAGAMENTO</b><p>Você pode gerar <strong>somente uma prévia</strong> para conhecer a qualidade do Studio Infinity IA. Assim, você vê o resultado primeiro e paga com certeza e confiança somente se gostar.</p></div>
         <div class="addons">
-          <h3>Personalize seu ensaio</h3>
+          <div class="addons-head">
+            <h3>Personalize seu ensaio do seu jeito!</h3>
+            <p>Escolha agora as opções que deseja incluir no seu ensaio.</p>
+          </div>
           <label class="addon"><span><b>Bolo temático com nome do bebê</b><small>Adiciona um bolo personalizado ao cenário</small></span><span class="addon-price">+ R$ 5</span><input id="cake" type="checkbox"><i></i></label>
           <div class="people-addon"><div><b>Pessoas adicionais</b><small>Além da pessoa principal • até 3 adicionais</small></div><div class="counter"><button id="minusPerson" type="button">−</button><strong id="extraPeople">0</strong><button id="plusPerson" type="button">+</button></div><span>+ R$ 5 cada</span></div>
         </div>
-        <div class="sticky-summary" id="summary"><div><small>SEU PEDIDO</small><b id="summaryText">1 foto</b></div><strong id="totalPrice">R$ 20</strong><button id="toThemes">GERAR MINHA PRÉVIA ↓</button></div>
+        <div class="sticky-summary" id="summary">
+          <div><small>SEU PEDIDO</small><b id="summaryText">1 foto</b></div>
+          <div class="summary-total"><small>TOTAL DO PEDIDO</small><strong id="totalPrice">R$ 20</strong></div>
+          <button id="toThemes">GERAR MINHA PRÉVIA ↓</button>
+        </div>
       </div>
     </section>
 
@@ -217,6 +272,15 @@
     <section id="gerar" class="flow-section generator-section">
       <div class="step-title"><i>5</i><div><span>SUA PRÉVIA</span><h2>Agora envie sua foto.</h2></div></div>
       <div class="chosen-order" id="chosenOrder"><span>Tema: <b id="chosenThemeLabel">Escolha um tema acima</b></span><span>Total se gostar: <b id="chosenTotal">R$ 20</b></span></div>
+      <div class="photo-trust">
+        <span class="trust-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.6-2.7 8.1-7 10-4.3-1.9-7-5.4-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>
+        </span>
+        <div>
+          <b>A foto do seu bebê merece todo cuidado.</b>
+          <p>Sabemos como essa foto é especial. Ela será utilizada para criar a prévia do ensaio escolhido. <a href="privacidade.html" target="_blank" rel="noopener">Consulte nossa política de privacidade</a> para entender como suas imagens são tratadas.</p>
+        </div>
+      </div>
       <label class="upload-box" for="photo"><input id="photo" type="file" accept="image/jpeg,image/png,image/webp"><span class="upload-icon">＋</span><b>Selecionar minha foto</b><small>Use uma foto nítida, de preferência de frente</small><em id="fileName"></em></label>
       <button class="primary full" id="generate" disabled>GERAR PRÉVIA • PAGUE SÓ SE GOSTAR</button>
       <div id="generationProgress" class="generation-progress hidden" aria-live="polite">
@@ -253,6 +317,6 @@
   </main>
 
   <a class="floating-wa" data-whatsapp target="_blank" rel="noopener" aria-label="WhatsApp">WhatsApp</a>
-  <footer><img src="logo.jpeg" alt=""><div><b>Studio Infinity IA</b><small>Ensaios personalizados com inteligência artificial.</small></div><a data-instagram target="_blank" rel="noopener">@studioinfinityia</a></footer>
-  <script src="config.js?v=20261004-1"></script><script src="script.js?v=20261009-occasion-1"></script>
+  <footer><img src="logo.jpeg" alt=""><div><b>Studio Infinity IA</b><small>Ensaios personalizados com inteligência artificial.</small><a class="footer-privacy" href="privacidade.html" target="_blank" rel="noopener">Política de privacidade</a></div><a data-instagram target="_blank" rel="noopener">@studioinfinityia</a></footer>
+  <script src="config.js?v=20261004-1"></script><script src="script.js?v=20261013-funil-1"></script>
 </body></html>

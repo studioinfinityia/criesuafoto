@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#050817">
+  <title>Política de Privacidade • Studio Infinity IA</title>
+  <meta name="description" content="Política de privacidade do Studio Infinity IA sobre fotos, prévias, pagamentos e rastreamento.">
+  <link rel="icon" type="image/jpeg" href="logo.jpeg?v=20261004">
+  <link rel="stylesheet" href="style.css?v=20261013-funil-1">
+  <style>
+    .privacy-shell{width:min(100% - 30px,820px);margin:34px auto 70px}
+    .privacy-card{padding:26px;background:#0b1026;border:1px solid rgba(255,255,255,.1);border-radius:22px}
+    .privacy-card h1{font-size:34px;letter-spacing:-.04em;margin:6px 0 10px}
+    .privacy-card h2{font-size:18px;margin:25px 0 8px}
+    .privacy-card p,.privacy-card li{color:#b9c1df;line-height:1.65;font-size:13px}
+    .privacy-card ul{padding-left:20px}
+    .privacy-card a{color:#18d9ff;font-weight:800}
+    .privacy-note{padding:13px 15px;border-radius:14px;background:rgba(24,217,255,.06);border:1px solid rgba(24,217,255,.18)}
+    @media(max-width:680px){.privacy-shell{margin-top:18px}.privacy-card{padding:19px 16px}.privacy-card h1{font-size:28px}.privacy-card p,.privacy-card li{font-size:12px}}
+  </style>
+</head>
+<body>
+  <main class="privacy-shell">
+    <a class="brand" href="./"><img src="logo.jpeg" alt="Studio Infinity IA"><span>STUDIO INFINITY IA</span></a>
+    <section class="privacy-card">
+      <span class="pill">PRIVACIDADE E USO DAS IMAGENS</span>
+      <h1>Política de Privacidade</h1>
+      <p>Esta política descreve, de forma compatível com o funcionamento técnico atual do Studio Infinity IA, como os dados e imagens enviados pelo site são utilizados.</p>
+
+      <h2>1. Fotos enviadas e imagens geradas</h2>
+      <p>A foto enviada é utilizada para criar a prévia e as imagens do ensaio selecionado. No fluxo atual, a foto é enviada ao serviço de geração de imagens da OpenAI para processamento e os arquivos necessários ao pedido são armazenados no Supabase Storage.</p>
+      <p>O sistema também mantém arquivos relacionados ao pedido, como a imagem original gerada, a prévia com marca-d’água e dados técnicos necessários para identificar o pedido e liberar o download após a confirmação do pagamento.</p>
+
+      <h2>2. Tempo de armazenamento</h2>
+      <p class="privacy-note"><b>Importante:</b> o sistema atual não possui uma rotina automática que exclua imediatamente as fotos após a geração ou o pagamento. Por isso, as imagens e dados do pedido podem permanecer armazenados no Supabase até que sejam removidos administrativamente.</p>
+
+      <h2>3. Controle da prévia gratuita</h2>
+      <p>O site cria um identificador técnico no navegador/dispositivo para aplicar a regra de uma prévia gratuita antes do pagamento. Esse identificador não é a foto e é utilizado para o funcionamento dessa regra do serviço.</p>
+
+      <h2>4. Pagamentos</h2>
+      <p>Os pagamentos são realizados pela Kiwify. O Studio Infinity IA utiliza a confirmação enviada pela Kiwify para liberar a imagem sem marca-d’água e, quando aplicável, as demais fotos do pacote adquirido.</p>
+
+      <h2>5. Medição e anúncios</h2>
+      <p>O site utiliza o Meta Pixel para medir etapas do funil, como carregamento da página, visualização dos temas, escolha de tema e pacote, início do envio, geração de prévia, início do checkout e compra confirmada. Esses eventos podem incluir dados técnicos do navegador e informações do pedido, mas não enviamos a foto do bebê ao Meta Pixel.</p>
+
+      <h2>6. Prestadores envolvidos no funcionamento</h2>
+      <ul>
+        <li><b>Supabase:</b> armazenamento de arquivos e dados técnicos do pedido.</li>
+        <li><b>OpenAI:</b> processamento da foto para criação da imagem com inteligência artificial.</li>
+        <li><b>Kiwify:</b> processamento e confirmação do pagamento.</li>
+        <li><b>Meta:</b> medição de eventos de navegação e conversão por meio do Pixel.</li>
+      </ul>
+
+      <h2>7. Solicitações sobre suas imagens</h2>
+      <p>Se você desejar solicitar informações ou remoção de imagens armazenadas, entre em contato pelos canais de atendimento disponíveis no site principal. A solicitação precisará conter informações suficientes para localizar o pedido correspondente.</p>
+
+      <h2>8. Atualizações desta política</h2>
+      <p>Esta política deve ser atualizada sempre que o funcionamento técnico do site, os prestadores utilizados ou as regras de armazenamento forem alterados.</p>
+
+      <p><a href="./">← Voltar para o Studio Infinity IA</a></p>
+    </section>
+  </main>
+</body>
+</html>

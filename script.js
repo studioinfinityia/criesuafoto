@@ -41,6 +41,14 @@ async function prepareUploadImage(file){
 const metaTrack=(event,params={},standard=false)=>{
   try{if(typeof window.fbq==='function') window.fbq(standard?'track':'trackCustom',event,params);}catch(e){}
 };
+const metaTrackOnce=(key,event,params={},standard=false)=>{
+  try{
+    const storageKey=`studio_meta_once_${key}`;
+    if(sessionStorage.getItem(storageKey)==='1')return;
+    metaTrack(event,params,standard);
+    sessionStorage.setItem(storageKey,'1');
+  }catch(e){metaTrack(event,params,standard);}
+};
 const trackingContext=()=>({
   gender:state.gender||'nao_selecionado',
   package_photos:state.photos,
@@ -57,7 +65,10 @@ document.addEventListener('click',(e)=>{
   const gender=e.target.closest('.gender-option');
   if(gender) setTimeout(()=>metaTrack('GenderSelected',trackingContext()),0);
   const pack=e.target.closest('.package');
-  if(pack) setTimeout(()=>metaTrack('PackageSelected',trackingContext()),0);
+  if(pack) setTimeout(()=>{
+    metaTrack('PackageSelected',trackingContext());
+    metaTrack('SelectPackage',{...trackingContext(),package_photos:+pack.dataset.package,package_price:+pack.dataset.price});
+  },0);
   const wa=e.target.closest('[data-whatsapp]');
   if(wa) metaTrack('WhatsAppClick',{...trackingContext(),placement:wa.id||wa.className||'site'});
 });
@@ -118,12 +129,12 @@ document.querySelectorAll('[data-instagram]').forEach(a=>a.href=cfg.instagram); 
 const money=v=>v.toLocaleString('pt-BR',{style:'currency',currency:'BRL',minimumFractionDigits:0}); const total=()=>state.basePrice+(state.cake?5:0)+state.extraPeople*5;
 function updateSummary(){const bits=[`${state.photos} ${state.photos===1?'foto':'fotos'}`];if(state.cake)bits.push('bolo temático');if(state.extraPeople)bits.push(`+${state.extraPeople} ${state.extraPeople===1?'pessoa':'pessoas'}`);document.querySelector('#summaryText').textContent=bits.join(' • ');document.querySelector('#totalPrice').textContent=money(total());document.querySelector('#chosenTotal').textContent=money(total());document.querySelector('#buyPrice').textContent=money(total());}
 function renderThemes(){const grid=document.querySelector('#themeGrid');grid.innerHTML='';if(!state.gender){grid.innerHTML='<div class="theme-empty">Escolha <b>Menino</b> ou <b>Menina</b> acima para liberar os temas.</div>';return;}themes.filter(t=>t.gender==='all'||t.gender===state.gender).forEach(t=>{const b=document.createElement('button');b.className='theme-card';b.innerHTML=`<div class="theme-cover" ${t.cover?`style="background-image:linear-gradient(0deg,rgba(5,8,23,.92),rgba(5,8,23,.05) 70%),url('${t.cover}')"`:''}><span>${t.tag}</span><b>${t.name}</b></div><p>${t.desc}</p><strong>Ver antes e depois →</strong>`;b.onclick=()=>openTheme(t);grid.appendChild(b);});}
-document.querySelectorAll('.gender-option').forEach(btn=>btn.onclick=()=>{document.querySelectorAll('.gender-option').forEach(x=>x.classList.remove('selected'));btn.classList.add('selected');state.gender=btn.dataset.gender;state.theme=null;document.querySelector('#chosenThemeLabel').textContent='Escolha um tema acima';document.querySelector('#temas').classList.remove('locked-section');document.querySelector('#personalizar').classList.add('locked-section');document.querySelector('#precos').classList.add('locked-section');setGuide('theme');document.querySelector('#genderNote').textContent=`Perfeito. Agora escolha um dos temas para ${state.gender}.`;renderThemes();document.querySelector('#temas').scrollIntoView({behavior:'smooth'});});
+document.querySelectorAll('.gender-option').forEach(btn=>btn.onclick=()=>{document.querySelectorAll('.gender-option').forEach(x=>x.classList.remove('selected'));btn.classList.add('selected');state.gender=btn.dataset.gender;state.theme=null;document.querySelector('#chosenThemeLabel').textContent='Escolha um tema acima';document.querySelector('#temas').classList.remove('locked-section');document.querySelector('#personalizar').classList.add('locked-section');document.querySelector('#precos').classList.add('locked-section');setGuide('theme');document.querySelector('#genderNote').textContent=`Perfeito. Agora escolha um dos temas para ${state.gender}.`;renderThemes();metaTrackOnce('themes_view','ViewContent',{...trackingContext(),content_name:'Temas do Studio Infinity IA',content_category:'Temas'},true);document.querySelector('#temas').scrollIntoView({behavior:'smooth'});});
 document.querySelectorAll('.package').forEach(btn=>btn.onclick=()=>{document.querySelectorAll('.package').forEach(x=>x.classList.remove('selected'));btn.classList.add('selected');state.photos=+btn.dataset.package;state.basePrice=+btn.dataset.price;updateSummary();setGuide('to-preview');});
 document.querySelector('#cake').onchange=e=>{state.cake=e.target.checked;updateSummary();};document.querySelector('#minusPerson').onclick=()=>{state.extraPeople=Math.max(0,state.extraPeople-1);document.querySelector('#extraPeople').textContent=state.extraPeople;updateSummary();};document.querySelector('#plusPerson').onclick=()=>{state.extraPeople=Math.min(3,state.extraPeople+1);document.querySelector('#extraPeople').textContent=state.extraPeople;updateSummary();};document.querySelector('#toThemes').onclick=()=>{if(!state.theme)return alert('Escolha primeiro um tema.');setGuide('upload');document.querySelector('#gerar').scrollIntoView({behavior:'smooth'});};
 function openTheme(t){state.theme=t;metaTrack('ThemeViewed',{...trackingContext(),theme_id:t.id,theme_name:t.name,theme_tag:t.tag});document.querySelector('#themeBadge').textContent=t.tag.toUpperCase();document.querySelector('#themeName').textContent=t.name;document.querySelector('#themeDescription').textContent=t.desc;document.querySelector('#beforeAfter').innerHTML=t.examples.length?t.examples.map(pair=>`<article class="ba-example"><div class="ba-grid"><figure class="ba-photo"><span>ANTES</span><img src="${pair[0]}" alt="Foto original" loading="lazy"></figure><figure class="ba-photo after"><span>DEPOIS</span><img src="${pair[1]}" alt="Resultado Studio Infinity IA" loading="lazy"></figure></div><small class="ba-caption">Foto enviada → resultado Studio Infinity IA</small></article>`).join(''):`<div class="no-example">Quer um tema diferente? Selecione esta opção e fale com a gente no WhatsApp.</div>`;document.querySelector('#themeDetail').classList.remove('hidden');setGuide('choose-theme');document.querySelector('#themeDetail').scrollIntoView({behavior:'smooth',block:'start'});}
 document.querySelector('#closeTheme').onclick=()=>document.querySelector('#themeDetail').classList.add('hidden');
-document.querySelector('#chooseTheme').onclick=()=>{if(state.theme?.id==='outros'){window.open(cfg.whatsapp,'_blank');return;}metaTrack('ThemeSelected',trackingContext());document.querySelector('#chosenThemeLabel').textContent=state.theme.name;document.querySelector('#personalizar').classList.remove('locked-section');document.querySelector('#themeDetail').classList.add('hidden');setGuide('personalize');document.querySelector('#personalizar').scrollIntoView({behavior:'smooth'});};
+document.querySelector('#chooseTheme').onclick=()=>{if(state.theme?.id==='outros'){window.open(cfg.whatsapp,'_blank');return;}metaTrack('ThemeSelected',trackingContext());metaTrack('SelectTheme',{...trackingContext(),theme_id:state.theme.id,theme_name:state.theme.name});document.querySelector('#chosenThemeLabel').textContent=state.theme.name;document.querySelector('#personalizar').classList.remove('locked-section');document.querySelector('#themeDetail').classList.add('hidden');setGuide('personalize');document.querySelector('#personalizar').scrollIntoView({behavior:'smooth'});};
 const babyName=document.querySelector('#babyName'), babyMonths=document.querySelector('#babyMonths'), photoNotes=document.querySelector('#photoNotes'), minimalist=document.querySelector('#minimalist'), confirmPersonalization=document.querySelector('#confirmPersonalization');
 const ageLabel=document.querySelector('#ageLabel');
 const occasionButtons=[...document.querySelectorAll('.occasion-option')];
@@ -139,7 +150,7 @@ function finishProgress(){clearInterval(progressTimer);document.querySelector('#
 function stopProgress(){clearInterval(progressTimer);document.querySelector('#generationProgress').classList.add('hidden');}
 function showPreview(url){if(!url)return;const img=document.querySelector('#previewImage');img.src=url;img.oncontextmenu=e=>e.preventDefault();img.ondragstart=e=>e.preventDefault();document.querySelector('#previewArea').classList.remove('hidden');setGuide('checkout');document.querySelector('#previewArea').scrollIntoView({behavior:'smooth'});}
 document.querySelector('#previewCard').addEventListener('contextmenu',e=>e.preventDefault());
-document.querySelector('#generate').onclick=async()=>{validatePersonalization();if(!state.theme||!photo.files[0]||!state.babyName||!state.babyMonths)return alert('Preencha o nome, selecione Mesversário ou Aniversário, informe a idade e selecione a foto.');const testDeviceSecret=localStorage.getItem('studio_test_device_secret');if(localStorage.getItem('studio_preview_used')==='1'&&!state.orderId&&!testDeviceSecret){alert('A prévia gratuita deste dispositivo já foi utilizada. Para ajustes ou um novo tema, fale conosco no WhatsApp.');return;}metaTrack('PreviewStarted',trackingContext());const btn=document.querySelector('#generate');btn.disabled=true;btn.textContent='CRIANDO SUA PRÉVIA...';if(testDeviceSecret){state.orderId=crypto.randomUUID();sessionStorage.setItem('studio_order_id',state.orderId);}else if(!state.orderId){state.orderId=crypto.randomUUID();sessionStorage.setItem('studio_order_id',state.orderId);}startProgress();try{const uploadImage=await prepareUploadImage(photo.files[0]);const fd=new FormData();fd.append('image',uploadImage);fd.append('orderId',state.orderId);fd.append('deviceId',deviceId);if(testDeviceSecret)fd.append('testDeviceSecret',testDeviceSecret);fd.append('gender',state.gender);fd.append('theme',state.theme.id);fd.append('themeName',state.theme.name);fd.append('occasion',state.occasion);fd.append('babyName',state.babyName);fd.append('babyMonths',state.babyMonths);fd.append('photoNotes',state.photoNotes);fd.append('minimalist',state.minimalist?'true':'false');fd.append('photos',state.photos);fd.append('cake',state.cake?'1':'0');fd.append('extraPeople',state.extraPeople);fd.append('total',total());const paidEntitlementOrderId=localStorage.getItem('studio_paid_entitlement_order_id');if(paidEntitlementOrderId)fd.append('paidEntitlementOrderId',paidEntitlementOrderId);const r=await fetch(cfg.apiEndpoint,{method:'POST',body:fd});const j=await r.json();if(!r.ok)throw new Error(j.error||'Não foi possível gerar a prévia.');
+document.querySelector('#generate').onclick=async()=>{validatePersonalization();if(!state.theme||!photo.files[0]||!state.babyName||!state.babyMonths)return alert('Preencha o nome, selecione Mesversário ou Aniversário, informe a idade e selecione a foto.');const testDeviceSecret=localStorage.getItem('studio_test_device_secret');if(localStorage.getItem('studio_preview_used')==='1'&&!state.orderId&&!testDeviceSecret){alert('A prévia gratuita deste dispositivo já foi utilizada. Para ajustes ou um novo tema, fale conosco no WhatsApp.');return;}metaTrack('PreviewStarted',trackingContext());const btn=document.querySelector('#generate');btn.disabled=true;btn.textContent='CRIANDO SUA PRÉVIA...';if(testDeviceSecret){state.orderId=crypto.randomUUID();sessionStorage.setItem('studio_order_id',state.orderId);}else if(!state.orderId){state.orderId=crypto.randomUUID();sessionStorage.setItem('studio_order_id',state.orderId);}startProgress();try{metaTrack('UploadStarted',{...trackingContext(),file_type:photo.files[0]?.type||'',file_size:photo.files[0]?.size||0});const uploadImage=await prepareUploadImage(photo.files[0]);const fd=new FormData();fd.append('image',uploadImage);fd.append('orderId',state.orderId);fd.append('deviceId',deviceId);if(testDeviceSecret)fd.append('testDeviceSecret',testDeviceSecret);fd.append('gender',state.gender);fd.append('theme',state.theme.id);fd.append('themeName',state.theme.name);fd.append('occasion',state.occasion);fd.append('babyName',state.babyName);fd.append('babyMonths',state.babyMonths);fd.append('photoNotes',state.photoNotes);fd.append('minimalist',state.minimalist?'true':'false');fd.append('photos',state.photos);fd.append('cake',state.cake?'1':'0');fd.append('extraPeople',state.extraPeople);fd.append('total',total());const paidEntitlementOrderId=localStorage.getItem('studio_paid_entitlement_order_id');if(paidEntitlementOrderId)fd.append('paidEntitlementOrderId',paidEntitlementOrderId);const r=await fetch(cfg.apiEndpoint,{method:'POST',body:fd});const j=await r.json();if(!r.ok)throw new Error(j.error||'Não foi possível gerar a prévia.');
 if(j.paid&&j.downloadUrl){
   finishProgress();
   document.querySelector('#previewArea').classList.add('hidden');
@@ -154,7 +165,7 @@ if(j.paid&&j.downloadUrl){
 }else{
   if(!j.testDevice)localStorage.setItem('studio_preview_used','1');finishProgress();showPreview(j.previewUrl);metaTrack('PreviewGenerated',trackingContext());
 }}catch(e){stopProgress();alert(e.message)}finally{btn.disabled=false;btn.textContent='GERAR PRÉVIA • PAGUE SÓ SE GOSTAR';}};
-document.querySelector('#buyButton').onclick=()=>{if(!state.orderId)return alert('Gere sua prévia primeiro.');const finalTotal=total();const checkout=cfg.kiwify?.byTotal?.[finalTotal];if(!checkout)return alert(`Ainda não há checkout configurado para ${money(finalTotal)}. Fale conosco no WhatsApp para concluir seu pedido.`);metaTrack('InitiateCheckout',trackingContext(),true);metaTrack('KiwifyRedirect',trackingContext());sessionStorage.setItem('studio_waiting_payment','1');const checkoutUrl=new URL(checkout);checkoutUrl.searchParams.set('s1',state.orderId);window.location.href=checkoutUrl.toString();};
+document.querySelector('#buyButton').onclick=()=>{if(!state.orderId)return alert('Gere sua prévia primeiro.');const finalTotal=total();const checkout=cfg.kiwify?.byTotal?.[finalTotal];if(!checkout)return alert(`Ainda não há checkout configurado para ${money(finalTotal)}. Fale conosco no WhatsApp para concluir seu pedido.`);metaTrack('InitiateCheckout',trackingContext(),true);metaTrack('KiwifyRedirect',trackingContext());sessionStorage.setItem('studio_waiting_payment','1');sessionStorage.setItem('studio_checkout_value',String(finalTotal));sessionStorage.setItem('studio_checkout_photos',String(state.photos));sessionStorage.setItem('studio_checkout_theme',state.theme?.name||'');const checkoutUrl=new URL(checkout);checkoutUrl.searchParams.set('s1',state.orderId);window.location.href=checkoutUrl.toString();};
 async function checkPayment(){
   if(!state.orderId)return;
   try{
@@ -162,6 +173,21 @@ async function checkPayment(){
     if(!r.ok)return;
     const j=await r.json();
     if(j.paid&&j.downloadUrl){
+      const paidOrderId=state.orderId;
+      const purchaseKey=`studio_meta_purchase_${paidOrderId}`;
+      if(paidOrderId && localStorage.getItem(purchaseKey)!=='1'){
+        const purchaseValue=Number(sessionStorage.getItem('studio_checkout_value')||0);
+        const purchasePhotos=Number(sessionStorage.getItem('studio_checkout_photos')||1);
+        const purchaseTheme=sessionStorage.getItem('studio_checkout_theme')||'';
+        metaTrack('Purchase',{
+          value:purchaseValue,
+          currency:'BRL',
+          num_items:purchasePhotos,
+          content_name:purchaseTheme||'Ensaio Studio Infinity IA',
+          order_id:paidOrderId
+        },true);
+        localStorage.setItem(purchaseKey,'1');
+      }
       localStorage.removeItem('studio_preview_used');
       if(j.remainingGenerations>0)localStorage.setItem('studio_paid_entitlement_order_id',state.orderId);
       else localStorage.removeItem('studio_paid_entitlement_order_id');
